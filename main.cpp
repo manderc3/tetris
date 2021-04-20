@@ -1,4 +1,5 @@
 #include <array>
+#include <ctime>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -18,10 +19,10 @@ namespace
 
     struct Tetromino
     {
-	Tetromino(const Vec pos, TetroTemplate* t_template) : pos(pos), t_template(t_template) {};
+	Tetromino(const Vec pos, const TetroTemplate& t_template) : pos(pos), t_template(t_template) {};
 
 	Vec pos;
-	TetroTemplate* t_template;
+	const TetroTemplate& t_template;
     };
 
     std::vector<Tetromino> tetrominoes;
@@ -43,11 +44,26 @@ int main()
     static constexpr TetroTemplate t_tetro { Vec(1, 0), Vec(0, 1), Vec(1, 1), Vec(2, 1) };
     static constexpr TetroTemplate z_tetro { Vec(0, 0), Vec(1, 0), Vec(1, 1), Vec(2, 1) };
 
-    // TODO: Set up a random number generator to determine what type of tetromino to generate
-
+    // Seed for random number generator
+    std::srand(std::time(nullptr));
     
     for(;;)
     {
+	std::cin.ignore();
 	
+	// generate a random number between 0-6 inclusive to determine which tetromino to genrate
+	auto r = std::rand() % 7;
+
+	auto which = [] (const char* val) { std::cout << "Added a " << val; };
+	switch(r)
+	{
+	case 0: which("i_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+	case 1: which("j_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+    	case 2: which("l_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+    	case 3: which("o_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+      	case 4: which("s_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+       	case 5: which("t_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+       	case 6: which("z_tetro"); tetrominoes.emplace_back(Vec(10, 10), i_tetro); break;
+	}
     }
 }
