@@ -58,6 +58,16 @@ namespace
 	    }
 	}
 
+	char at(int x, int y) const noexcept
+	{
+	    return playfield[y * 10 + x];
+	}
+	
+	void set(int x, int y, char val) noexcept
+	{
+	    playfield[y * 10 + x] = val;
+	}
+
     private:
 	std::array<char, 40 * 10> playfield; 
     };
@@ -68,7 +78,7 @@ namespace
 int main()
 {
     auto playfield = PlayField();
-    
+
     // Seed for random number generator
     std::srand(std::time(nullptr));
     
