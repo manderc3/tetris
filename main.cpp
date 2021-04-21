@@ -8,6 +8,14 @@
 
 namespace
 {
+    enum class GameState
+    {
+	GenerateTetro,
+	EndGame,
+	LowerTetro,
+	ClearRows
+    };
+    
     struct Vec
     {
 	constexpr Vec(std::int8_t x, std::int8_t y) : x(x), y(y) {};
