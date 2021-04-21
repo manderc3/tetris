@@ -121,7 +121,7 @@ namespace
 
 	void set_tile(int x, int y, char val) noexcept
 	{
-	    playfield[y * 10 + x] = val;
+	    //playfield[y * 10 + x] = val;
 	}	
     };
 }
