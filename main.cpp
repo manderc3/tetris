@@ -26,17 +26,28 @@ namespace
     };
 
     // TODO make this a string and represent each tetro within a 4x4 string matrix thingy (maybe stringview)
-    using TetroTemplate = std::array<Vec, 4>;
+    using TetroTemplate = std::string_view;
 
     // The template of all of the available tetrominos in the game.
     // The shape is defined by specifying the coordinates of each block.
-    static constexpr TetroTemplate i_tetro { Vec(0, 0), Vec(0, 1), Vec(0, 2), Vec(0, 3) };
-    static constexpr TetroTemplate j_tetro { Vec(1, 0), Vec(1, 1), Vec(1, 2), Vec(0, 2) };
-    static constexpr TetroTemplate l_tetro { Vec(0, 0), Vec(0, 1), Vec(0, 2), Vec(1, 2) };
-    static constexpr TetroTemplate o_tetro { Vec(0, 0), Vec(0, 1), Vec(1, 0), Vec(1, 1) };
-    static constexpr TetroTemplate s_tetro { Vec(0, 1), Vec(1, 1), Vec(0, 1), Vec(0, 2) };
-    static constexpr TetroTemplate t_tetro { Vec(1, 0), Vec(0, 1), Vec(1, 1), Vec(2, 1) };
-    static constexpr TetroTemplate z_tetro { Vec(0, 0), Vec(1, 0), Vec(1, 1), Vec(2, 1) };
+    static constexpr TetroTemplate i_tetro { "  I    I    I    I  " };
+    static constexpr TetroTemplate j_tetro { "       J    J   JJ  " };
+    static constexpr TetroTemplate l_tetro { "       L    L    LL " };
+    static constexpr TetroTemplate s_tetro { "           SS  SS   " };
+    static constexpr TetroTemplate o_tetro { "          OO   00   " };
+    static constexpr TetroTemplate t_tetro { "           TTT   T  " };
+    static constexpr TetroTemplate z_tetro { "          ZZ    ZZ  " };
+
+    // Debug function
+    void print_tetro_template(const TetroTemplate& t)
+    {
+	auto f = [](const char tile) { return tile == ' ' ? '-' : tile; };
+	
+	for (unsigned i = 0; i < t.size(); i += 5)
+	{
+	    std::cout << f(t[i]) << f(t[i + 1]) << f(t[i + 2]) << f(t[i + 3]) << f(t[i + 4]) << '\n';  
+	}
+    }
 
     struct Tetromino
     {
@@ -111,6 +122,14 @@ int main()
 {
     auto playfield = PlayField();
 
+    // print_tetro_template(i_tetro); std::cout << '\n';
+    // print_tetro_template(j_tetro); std::cout << '\n';
+    // print_tetro_template(l_tetro); std::cout << '\n';
+    // print_tetro_template(s_tetro); std::cout << '\n';
+    // print_tetro_template(o_tetro); std::cout << '\n';
+    // print_tetro_template(t_tetro); std::cout << '\n';
+    // print_tetro_template(z_tetro); std::cout << '\n';
+    
     // Seed for random number generator
     std::srand(std::time(nullptr));
     
