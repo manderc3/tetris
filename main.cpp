@@ -25,6 +25,7 @@ namespace
 	std::int8_t x, y;
     };
 
+    // TODO make this a string and represent each tetro within a 4x4 string matrix thingy (maybe stringview)
     using TetroTemplate = std::array<Vec, 4>;
 
     // The template of all of the available tetrominos in the game.
@@ -63,6 +64,9 @@ namespace
 
     // The play field is ten blocks wide and fourty blocks high.
     // Only twenty of the vertical blocks are visible to the user.
+    // TODO - Update class so that it does not store tetromino objects that have landed.
+    //      - Instead use the characters of each tetro type and store them in the playfield array.
+    //      - Once tetros have landed, the only information that we care about is their colour.
     class PlayField
     {
     public:
