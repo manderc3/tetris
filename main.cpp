@@ -1,4 +1,3 @@
-#include <array>
 #include <algorithm>
 #include <ctime>
 #include <iostream>
@@ -25,7 +24,6 @@ namespace
 	std::int8_t x, y;
     };
 
-    // TODO make this a string and represent each tetro within a 4x4 string matrix thingy (maybe stringview)
     using TetroTemplate = std::string_view;
 
     // The template of all of the available tetrominos in the game.
@@ -77,12 +75,7 @@ namespace
     // Only twenty of the vertical blocks are visible to the user
     class PlayField
     {
-    public:
-	PlayField()
-	{
-	    std::fill(playfield.begin(), playfield.end(), '#');
-	}
-	
+    public:	
         // utility for printing the ascii representation of the playfield
 	void print() const noexcept
 	{
@@ -112,7 +105,19 @@ namespace
 	}	
 
     private:
-	std::array<char, 40 * 10> playfield;
+	std::string_view playfield
+	{		
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "
+	    "          "	
+	};
 
 	void set_tile(int x, int y, char val) noexcept
 	{
