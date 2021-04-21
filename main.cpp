@@ -74,10 +74,7 @@ namespace
     }
 
     // The play field is ten blocks wide and fourty blocks high.
-    // Only twenty of the vertical blocks are visible to the user.
-    // TODO - Update class so that it does not store tetromino objects that have landed.
-    //      - Instead use the characters of each tetro type and store them in the playfield array.
-    //      - Once tetros have landed, the only information that we care about is their colour.
+    // Only twenty of the vertical blocks are visible to the user
     class PlayField
     {
     public:
@@ -102,16 +99,22 @@ namespace
 	    return playfield[y * 10 + x];
 	}
 
-	void add_tetro(Tetromino&& tetromino) noexcept
+	void add_tetro(const Tetromino& tetromino) noexcept
 	{
-	    tetrominoes.push_back(std::move(tetromino));
+	    for (int y = 0; y < 5; y++)
+		for (int x = 0; x < 5; x++)
+		{		    
+		    if (char tile = tetromino.t_template[y * 5 + x]; tile != ' ')
+		    {
+			set_tile(tetromino.pos.x + (y * 5) + x, y, tile);
+		    }
+		}
 	}	
 
     private:
 	std::array<char, 40 * 10> playfield;
-	std::vector<Tetromino> tetrominoes;
 
-	void set(int x, int y, char val) noexcept
+	void set_tile(int x, int y, char val) noexcept
 	{
 	    playfield[y * 10 + x] = val;
 	}	
