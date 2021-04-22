@@ -2,8 +2,12 @@
 #include <ctime>
 #include <iostream>
 #include <random>
+#include <string>
 #include <string_view>
 #include <vector>
+
+#include "include/utility.h"
+#include "include/tetromino.h"
 
 namespace
 {
@@ -14,62 +18,6 @@ namespace
 	LowerTetro,
 	ClearRows
     };
-    
-    struct Vec
-    {
-	constexpr Vec(std::int8_t x, std::int8_t y) : x(x), y(y) {};
-	constexpr Vec(const Vec&) = default;
-	constexpr Vec(Vec&&) = default;   
-
-	std::int8_t x, y;
-    };
-
-    using TetroTemplate = std::string_view;
-
-    // The template of all of the available tetrominos in the game.
-    // The shape is defined by specifying the coordinates of each block.
-    static constexpr TetroTemplate i_tetro { "  I    I    I    I  " };
-    static constexpr TetroTemplate j_tetro { "       J    J   JJ  " };
-    static constexpr TetroTemplate l_tetro { "       L    L    LL " };
-    static constexpr TetroTemplate s_tetro { "           SS  SS   " };
-    static constexpr TetroTemplate o_tetro { "          OO   00   " };
-    static constexpr TetroTemplate t_tetro { "           TTT   T  " };
-    static constexpr TetroTemplate z_tetro { "          ZZ    ZZ  " };
-
-    // Debug function
-    void print_tetro_template(const TetroTemplate& t)
-    {
-	auto f = [](const char tile) { return tile == ' ' ? '-' : tile; };
-	
-	for (unsigned i = 0; i < t.size(); i += 5)
-	{
-	    std::cout << f(t[i]) << f(t[i + 1]) << f(t[i + 2]) << f(t[i + 3]) << f(t[i + 4]) << '\n';  
-	}
-    }
-
-    struct Tetromino
-    {
-	Tetromino(const Vec pos, const TetroTemplate& t_template) : pos(pos), t_template(t_template) {};
-
-	Vec pos;
-	const TetroTemplate& t_template;
-    };
-
-    Tetromino get_new_tetro(const int type, Vec&& pos)
-    {
-	auto which = [] (const char* val) { std::cout << "Added a " << val; };
-	switch(type)
-	{
-	case 0: which("i_tetro"); return Tetromino(std::move(pos), i_tetro);
-	case 1: which("j_tetro"); return Tetromino(std::move(pos), j_tetro);
-    	case 2: which("l_tetro"); return Tetromino(std::move(pos), l_tetro);
-    	case 3: which("o_tetro"); return Tetromino(std::move(pos), o_tetro);
-      	case 4: which("s_tetro"); return Tetromino(std::move(pos), s_tetro);
-       	case 5: which("t_tetro"); return Tetromino(std::move(pos), t_tetro);
-       	case 6: which("z_tetro"); return Tetromino(std::move(pos), z_tetro);
-	default:                  return Tetromino(std::move(pos), z_tetro);
-	}
-    }
 
     // The play field is ten blocks wide and fourty blocks high.
     // Only twenty of the vertical blocks are visible to the user
@@ -92,7 +40,7 @@ namespace
 	    return playfield[y * 10 + x];
 	}
 
-	void add_tetro(const Tetromino& tetromino) noexcept
+	void add_tetro(const Tetromino::Tetromino& tetromino) noexcept
 	{
 	    for (int y = 0; y < 5; y++)
 		for (int x = 0; x < 5; x++)
@@ -105,7 +53,7 @@ namespace
 	}	
 
     private:
-	std::string_view playfield
+	std::string playfield
 	{		
 	    "          "
 	    "          "
@@ -121,7 +69,7 @@ namespace
 
 	void set_tile(int x, int y, char val) noexcept
 	{
-	    //playfield[y * 10 + x] = val;
+	    playfield[y * 10 + x] = val;
 	}	
     };
 }
@@ -130,13 +78,13 @@ int main()
 {
     auto playfield = PlayField();
 
-    // print_tetro_template(i_tetro); std::cout << '\n';
-    // print_tetro_template(j_tetro); std::cout << '\n';
-    // print_tetro_template(l_tetro); std::cout << '\n';
-    // print_tetro_template(s_tetro); std::cout << '\n';
-    // print_tetro_template(o_tetro); std::cout << '\n';
-    // print_tetro_template(t_tetro); std::cout << '\n';
-    // print_tetro_template(z_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::i_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::j_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::l_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::s_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::o_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::t_tetro); std::cout << '\n';
+    Tetromino::print_tetro_template(Tetromino::z_tetro); std::cout << '\n';
     
     // Seed for random number generator
     std::srand(std::time(nullptr));
@@ -146,6 +94,11 @@ int main()
 	std::cin.ignore();
 
 	// Generate new tetromino
-	auto current_tetro = get_new_tetro(std::rand() % 7, Vec(10, 10));
+	//auto current_tetro = get_new_tetro(std::rand() % 7, Vec(10, 10));
+	auto current_tetro = Tetromino::get_new_tetro(0, Vec(10, 10));
+
+	//playfield.add_tetro(current_tetro);
+
+	//playfield.print();
     }
 }
