@@ -41,14 +41,14 @@ namespace Tetromino
 	auto which = [] (const char* val) { std::cout << "Added a " << val; };
 	switch(type)
 	{
-	case 0: which("i_tetro"); return Tetromino(std::move(pos), i_tetro);
-	case 1: which("j_tetro"); return Tetromino(std::move(pos), j_tetro);
-    	case 2: which("l_tetro"); return Tetromino(std::move(pos), l_tetro);
-    	case 3: which("o_tetro"); return Tetromino(std::move(pos), o_tetro);
-      	case 4: which("s_tetro"); return Tetromino(std::move(pos), s_tetro);
-       	case 5: which("t_tetro"); return Tetromino(std::move(pos), t_tetro);
-       	case 6: which("z_tetro"); return Tetromino(std::move(pos), z_tetro);
-	default:                  return Tetromino(std::move(pos), z_tetro);
+	case 0: /*which("i_tetro");*/ return Tetromino(std::move(pos), i_tetro);
+	case 1: /*which("j_tetro");*/ return Tetromino(std::move(pos), j_tetro);
+    	case 2: /*which("l_tetro");*/ return Tetromino(std::move(pos), l_tetro);
+    	case 3: /*which("o_tetro");*/ return Tetromino(std::move(pos), o_tetro);
+      	case 4: /*which("s_tetro");*/ return Tetromino(std::move(pos), s_tetro);
+       	case 5: /*which("t_tetro");*/ return Tetromino(std::move(pos), t_tetro);
+       	case 6: /*which("z_tetro");*/ return Tetromino(std::move(pos), z_tetro);
+	default:                      return Tetromino(std::move(pos), z_tetro);
 	}
     }
 }
