@@ -30,10 +30,12 @@ namespace Tetromino
 
     struct Tetromino
     {
-	Tetromino(const Vec pos, const TetroTemplate& t_template) : pos(pos), t_template(t_template) {};
+	Tetromino(const Vec pos, TetroTemplate t_template) : pos(pos), t_template(t_template) {};
 
+	Tetromino& operator=(Tetromino&&) = default;
+	
 	Vec pos;
-	const TetroTemplate& t_template;
+	TetroTemplate t_template;
     };
 
     Tetromino get_new_tetro(const int type, Vec&& pos)

@@ -11,11 +11,12 @@
 
 namespace
 {
-    enum class GameState
+    enum class GameState : std::int8_t
     {
 	GenerateTetro,
 	EndGame,
 	LowerTetro,
+	CheckRows,
 	ClearRows
     };
 
@@ -114,15 +115,50 @@ int main()
     // Tetromino::print_tetro_template(Tetromino::z_tetro); std::cout << '\n';
     
     // Seed for random number generator
+    // TODO use the newer random library
     std::srand(std::time(nullptr));
-    
+
+    auto game_state = GameState::LowerTetro;
+    auto current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(1, 1));
+
     for(;;)
     {
 	std::cin.ignore();
 
-	// Generate new tetromino
-	//auto current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(1, 1));
-	auto current_tetro = Tetromino::get_new_tetro(0, Vec(1, 16));
+	switch (game_state)
+	{
+	case GameState::EndGame:
+	{
+	    // TODO handle end-game
+	}
+	  
+	case GameState::GenerateTetro:
+	{
+	    // Generate new tetromino
+	    current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(1, 1));
+	    game_state = GameState::LowerTetro;
+	    break;
+	}
+	case GameState::LowerTetro:
+	{
+	    // TODO - Check if it is possible to lower the tetro, if it isn't the tetro has landed and we need to
+	    //        move to the CheckFullRows state. Otherwise lower the tetro and remain in that state.
+	    //        LowerTetro is the general state also, user input is also check to move left and right.
+	    current_tetro.pos += Vec(1, 0);
+	    break;
+	}
+	case GameState::CheckRows:
+	{
+	    // TODO - CheckFullRows and if any are found, transition to the ClearRows state. Otherwise,
+	    //        transition to the GenerateTetro state.
+	    break;
+	}
+	case GameState::ClearRows:
+	{
+	    // TODO - Identify full rows, clear them, then transition to the GenerateTetro state
+	    break;
+	}
+	}
 
 	playfield.add_tetro(current_tetro);
 	playfield.clear({17, 19});
