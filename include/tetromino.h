@@ -38,19 +38,18 @@ namespace Tetromino
 	TetroTemplate t_template;
     };
 
-    Tetromino get_new_tetro(const int type, Vec&& pos)
+    TetroTemplate get_tetro_template(const int type)
     {
-	auto which = [] (const char* val) { std::cout << "Added a " << val; };
 	switch(type)
 	{
-	case 0: /*which("i_tetro");*/ return Tetromino(std::move(pos), i_tetro);
-	case 1: /*which("j_tetro");*/ return Tetromino(std::move(pos), j_tetro);
-    	case 2: /*which("l_tetro");*/ return Tetromino(std::move(pos), l_tetro);
-    	case 3: /*which("o_tetro");*/ return Tetromino(std::move(pos), o_tetro);
-      	case 4: /*which("s_tetro");*/ return Tetromino(std::move(pos), s_tetro);
-       	case 5: /*which("t_tetro");*/ return Tetromino(std::move(pos), t_tetro);
-       	case 6: /*which("z_tetro");*/ return Tetromino(std::move(pos), z_tetro);
-	default:                      return Tetromino(std::move(pos), z_tetro);
+	case 0:  return i_tetro;
+	case 1:  return j_tetro;
+    	case 2:  return l_tetro;
+    	case 3:  return o_tetro;
+      	case 4:  return s_tetro;
+       	case 5:  return t_tetro;
+       	case 6:  return z_tetro;
+	default: return z_tetro;
 	}
     }
 }
