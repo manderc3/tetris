@@ -40,7 +40,7 @@ int main()
     std::srand(std::time(nullptr));
 
     auto game_state = GameState::LowerTetro;
-    auto current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(1, 1));
+    auto current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(0, 0));
 
     for(;;)
     {
@@ -56,7 +56,7 @@ int main()
 	case GameState::GenerateTetro:
 	{
 	    // Generate new tetromino
-	    current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(1, 1));
+	    current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(0, 0));
 	    game_state = GameState::LowerTetro;
 	    break;
 	}

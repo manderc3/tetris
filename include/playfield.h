@@ -9,6 +9,11 @@ public:
     {
 	// take a copy of the playfield and apply the current tetromino on top
 	std::string playfield_copy(playfield.data());
+
+	for (int y = 0; y < 4; y++)
+	    for (int x = 0; x < 4; x++)
+		if (char tile = tetro.t_template[y * 4 + x]; tile != ' ')
+		    playfield_copy[(tetro.pos.y + y) * 10 + tetro.pos.x + x] = tile;
 	
 	for (int y = 0; y < 20; y++)
 	{
@@ -59,7 +64,7 @@ public:
 	/* 	} */
 	/*     }	 */
 
-	return true;
+	return false;
     }
 
     void clear_all() noexcept
