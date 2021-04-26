@@ -64,7 +64,8 @@ public:
 	/* 	} */
 	/*     }	 */
 
-	return false;
+	// TODO: Code for checking that current tetro has landed on another
+	return tetro.pos.y + 5 == 20;
     }
 
     void clear_all() noexcept

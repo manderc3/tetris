@@ -18,7 +18,6 @@ namespace
 	EndGame,
 	LowerTetro,
 	TetroLanded,
-	CheckRows,
 	ClearRows
     };
 }
@@ -27,22 +26,12 @@ int main()
 {
     auto playfield = PlayField();
 
-    // Tetromino::print_tetro_template(Tetromino::i_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::j_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::l_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::s_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::o_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::t_tetro); std::cout << '\n';
-    // Tetromino::print_tetro_template(Tetromino::z_tetro); std::cout << '\n';
-    
     // Seed for random number generator
     // TODO use the newer random library
     std::srand(std::time(nullptr));
 
     auto game_state = GameState::LowerTetro;
-
-    const auto new_tetro_template = Tetromino::get_tetro_template(std::rand() % 7);
-    auto current_tetro = Tetromino::Tetromino(Vec(4, 0 - get_ypos_offset(new_tetro_template) - 1), new_tetro_template);
+    auto current_tetro = Tetromino::get_new_tetro();
 
     for(;;)
     {
@@ -58,7 +47,7 @@ int main()
 	case GameState::GenerateTetro:
 	{
 	    // Generate new tetromino
-	    //current_tetro = Tetromino::get_new_tetro(std::rand() % 7, Vec(0, 0));
+	    current_tetro = Tetromino::get_new_tetro();
 	    game_state = GameState::LowerTetro;
 	    break;
 	}
@@ -77,18 +66,14 @@ int main()
 	}
 	case GameState::TetroLanded:
 	{
-	    game_state = GameState::CheckRows;
-	    break;
-	}
-	case GameState::CheckRows:
-	{
-	    // TODO - CheckFullRows and if any are found, transition to the ClearRows state. Otherwise,
-	    //        transition to the GenerateTetro state.
+	    // Commit current tetro to playfield
+	    playfield.add_tetro(current_tetro);
+	    game_state = GameState::ClearRows;
 	    break;
 	}
 	case GameState::ClearRows:
 	{
-	    // TODO - Identify full rows, clear them, then transition to the GenerateTetro state
+	    // TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
 	    break;
 	}
 	}
