@@ -5,7 +5,7 @@ TARGET = tetris
 all: $(TARGET)
 
 $(TARGET): 
-	$(CC) $(TARGET).cpp $(CFLAGS) -o $(TARGET)
+	$(CC) $(TARGET).cpp $(CFLAGS) -o $(TARGET) -lSDL2
 
 clean:
 	$(RM) $(TARGET)

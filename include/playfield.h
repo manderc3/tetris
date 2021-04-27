@@ -12,7 +12,7 @@ public:
 
 	for (int y = 0; y < 4; y++)
 	    for (int x = 0; x < 4; x++)
-		if (char tile = tetro.t_template[y * 4 + x]; tile != ' ')
+		if (char tile = tetro.t_template[y * 4 + x]; tile != ' ' && tetro.pos.y + y >= 0)
 		    playfield_copy[(tetro.pos.y + y) * 10 + tetro.pos.x + x] = tile;
 	
 	for (int y = 0; y < 20; y++)
@@ -65,7 +65,7 @@ public:
 	/*     }	 */
 
 	// TODO: Code for checking that current tetro has landed on another
-	return tetro.pos.y + 5 == 20;
+	return tetro.pos.y + 4 == 20;
     }
 
     void clear_all() noexcept
