@@ -34,6 +34,46 @@ namespace
 	"#      @"
 	"@@@@@@@@"
     };
+
+    enum class Colour : std::int8_t
+    {
+	light_blue,
+	blue,
+	orange,
+	yellow,
+	green,
+        purple,
+	red
+    };
+
+    struct RGB
+    {
+	std::uint8_t r, g, b;
+    };
+
+    std::unordered_map<Colour, RGB> rgb_mappings
+    {
+	{ Colour::light_blue, { 0x00, 0xFF, 0xFF } },
+	{ Colour::blue,       { 0x00, 0x00, 0xFF } },
+	{ Colour::orange,     { 0xFF, 0x80, 0x00 } },
+	{ Colour::yellow,     { 0xFF, 0xFF, 0x00 } },
+	{ Colour::green,      { 0x00, 0xCC, 0x00 } },
+	{ Colour::purple,     { 0xFF, 0x00, 0xFF } },
+	{ Colour::red,        { 0xFF, 0x00, 0x00 } },	    
+    };    
+
+    void draw_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colour)
+    {
+	const auto& rgb = rgb_mappings.at(colour);
+
+	SDL_SetRenderDrawColor(renderer, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE); 
+	
+	for (int y = 0; y < 8; y++)
+	    for (int x = 0; x < 8; x++)
+	    {
+		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);		
+	    }
+    }
 }
 
 int main()
@@ -127,10 +167,11 @@ int main()
 	// }
 	// }
 
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
 	// TODO rendering stuff goes here
+	draw_tetro_tile(renderer, Vec(50, 50), Colour::light_blue);
 
 	SDL_RenderPresent(renderer);
     }
