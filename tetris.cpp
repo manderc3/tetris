@@ -26,12 +26,12 @@ namespace
     constexpr std::string_view tetro_tile
     {
 	"########"
-	"#      @"
-	"#      @"
-	"#      @"
-	"#      @"
-	"#      @"
-	"#      @"
+	"?      ?"
+	"?######?"
+	"?######?"
+	"?######?"
+	"?######?"
+	"?######?"
 	"@@@@@@@@"
     };
 
@@ -43,7 +43,8 @@ namespace
 	yellow,
 	green,
         purple,
-	red
+	red,
+	grey
     };
 
     struct RGB
@@ -51,28 +52,27 @@ namespace
 	std::uint8_t r, g, b;
     };
 
-    std::unordered_map<Colour, RGB> rgb_mappings
+    std::unordered_map<Colour, std::array<RGB, 4>> rgb_mappings
     {
-	{ Colour::light_blue, { 0x00, 0xFF, 0xFF } },
-	{ Colour::blue,       { 0x00, 0x00, 0xFF } },
-	{ Colour::orange,     { 0xFF, 0x80, 0x00 } },
-	{ Colour::yellow,     { 0xFF, 0xFF, 0x00 } },
-	{ Colour::green,      { 0x00, 0xCC, 0x00 } },
-	{ Colour::purple,     { 0xFF, 0x00, 0xFF } },
-	{ Colour::red,        { 0xFF, 0x00, 0x00 } },	    
+    	{ Colour::light_blue, { { { 0x00, 0xFF, 0xFF }, { 0x00, 0xFF, 0xFF }, { 0x00, 0xFF, 0xFF }, { 0x00, 0xFF, 0xFF } } } },
+    	{ Colour::blue,       { { { 0x00, 0x00, 0xFF }, { 0x00, 0x00, 0xFF }, { 0x00, 0x00, 0xFF }, { 0x00, 0x00, 0xFF } } } },
+    	{ Colour::orange,     { { { 0xFF, 0x80, 0x00 }, { 0xFF, 0x80, 0x00 }, { 0xFF, 0x80, 0x00 }, { 0xFF, 0x80, 0x00 } } } },
+    	{ Colour::yellow,     { { { 0xFF, 0xFF, 0x00 }, { 0xFF, 0xFF, 0x00 }, { 0xFF, 0xFF, 0x00 }, { 0xFF, 0xFF, 0x00 } } } },
+    	{ Colour::green,      { { { 0x00, 0xCC, 0x00 }, { 0x00, 0xCC, 0x00 }, { 0x00, 0xCC, 0x00 }, { 0x00, 0xCC, 0x00 } } } },
+    	{ Colour::purple,     { { { 0xFF, 0x00, 0xFF }, { 0xFF, 0x00, 0xFF }, { 0xFF, 0x00, 0xFF }, { 0xFF, 0x00, 0xFF } } } },
+    	{ Colour::red,        { { { 0xFF, 0x00, 0x00 }, { 0xFF, 0x00, 0x00 }, { 0xFF, 0x00, 0x00 }, { 0xFF, 0x00, 0x00 } } } },
+    	{ Colour::grey,       { { { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 } } } }
     };    
 
     void draw_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colour)
     {
-	const auto& rgb = rgb_mappings.at(colour);
+    	const auto& rgb = rgb_mappings.at(colour)[0];
 
-	SDL_SetRenderDrawColor(renderer, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE); 
+    	SDL_SetRenderDrawColor(renderer, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE); 
 	
-	for (int y = 0; y < 8; y++)
-	    for (int x = 0; x < 8; x++)
-	    {
-		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);		
-	    }
+    	for (int y = 0; y < 8; y++)
+    	    for (int x = 0; x < 8; x++)
+    		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);
     }
 }
 
@@ -94,6 +94,10 @@ int main()
                                    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    // Required for scaling
+    SDL_RenderSetLogicalSize(renderer, window_width, window_height);
+    SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
 
     auto playfield = PlayField();
 
