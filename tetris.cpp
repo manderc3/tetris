@@ -54,26 +54,34 @@ namespace
 
     std::unordered_map<Colour, std::array<RGB, 4>> rgb_mappings
     {
-	///////////////////////////      Light       ////      Medium      ////       Base       ////       Dark       ///////
+  	///////////////////////////      Light       ////      Medium      ////       Base       ////       Dark       ///////
     	{ Colour::light_blue, { { { 0xA3, 0xFB, 0xF0 }, { 0x00, 0xBD, 0xC1 }, { 0x55, 0xC3, 0xC5 }, { 0x00, 0x70, 0x94 } } } },
     	{ Colour::blue,       { { { 0xA3, 0xC7, 0xFB }, { 0x05, 0x4A, 0xC3 }, { 0x63, 0x9A, 0xC5 }, { 0x00, 0x15, 0x95 } } } },
     	{ Colour::orange,     { { { 0xFB, 0xCC, 0xA3 }, { 0xC0, 0x55, 0x00 }, { 0xC4, 0xD7, 0x5A }, { 0x91, 0x20, 0x00 } } } },
     	{ Colour::yellow,     { { { 0xFF, 0xFD, 0xC2 }, { 0xC2, 0xAC, 0x04 }, { 0xC5, 0xC3, 0x6A }, { 0x96, 0x67, 0x00 } } } },
     	{ Colour::green,      { { { 0xDF, 0xFB, 0xA3 }, { 0x00, 0xC8, 0x15 }, { 0x8C, 0xC6, 0x76 }, { 0x00, 0x96, 0x02 } } } },
     	{ Colour::purple,     { { { 0xFB, 0xA3, 0xD7 }, { 0xAE, 0x05, 0xBD }, { 0xDA, 0x67, 0xDC }, { 0x6B, 0x00, 0x95 } } } },
-    	{ Colour::red,        { { { 0xFB, 0xA3  0xAF }, { 0xB9, 0x05, 0x05 }, { 0xC5, 0x55  0x59 }, { 0x8E, 0x00, 0x00 } } } },
+    	{ Colour::red,        { { { 0xFB, 0xA3, 0xAF }, { 0xB9, 0x05, 0x05 }, { 0xC5, 0x55, 0x59 }, { 0x8E, 0x00, 0x00 } } } },
     	{ Colour::grey,       { { { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 } } } }
     };    
 
     void draw_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colour)
     {
-    	const auto& rgb = rgb_mappings.at(colour)[0];
-
-    	SDL_SetRenderDrawColor(renderer, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE); 
+    	const auto& rgb = rgb_mappings.at(colour);
 	
     	for (int y = 0; y < 8; y++)
     	    for (int x = 0; x < 8; x++)
-    		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);
+	    {
+		switch(tetro_tile[y * 8 + x])
+		{
+		case ' ': /* light */  SDL_SetRenderDrawColor(renderer, rgb[0].r, rgb[0].g, rgb[0].b, SDL_ALPHA_OPAQUE); break;
+	 	case '#': /* base */   SDL_SetRenderDrawColor(renderer, rgb[2].r, rgb[2].g, rgb[2].b, SDL_ALPHA_OPAQUE); break;
+		case '?': /* medium */ SDL_SetRenderDrawColor(renderer, rgb[1].r, rgb[1].g, rgb[1].b, SDL_ALPHA_OPAQUE); break;
+		default : /* dark*/    SDL_SetRenderDrawColor(renderer, rgb[3].r, rgb[3].g, rgb[3].b, SDL_ALPHA_OPAQUE); break;
+		}
+
+		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);
+	    }
     }
 }
 
@@ -176,7 +184,7 @@ int main()
 	SDL_RenderClear(renderer);
 
 	// TODO rendering stuff goes here
-	draw_tetro_tile(renderer, Vec(50, 50), Colour::light_blue);
+	draw_tetro_tile(renderer, Vec(50, 50), Colour::purple);
 
 	SDL_RenderPresent(renderer);
     }
