@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <random>
@@ -11,6 +12,8 @@
 #include "include/utility.h"
 #include "include/tetromino.h"
 #include "include/playfield.h"
+#include "include/colour.h"
+#include "include/rendering.h"
 
 namespace
 {
@@ -22,73 +25,13 @@ namespace
 	TetroLanded,
 	ClearRows
     };
-
-    constexpr std::string_view tetro_tile
-    {
-	"########"
-	"?      ?"
-	"?######?"
-	"?######?"
-	"?######?"
-	"?######?"
-	"?######?"
-	"@@@@@@@@"
-    };
-
-    enum class Colour : std::int8_t
-    {
-	light_blue,
-	blue,
-	orange,
-	yellow,
-	green,
-        purple,
-	red,
-	grey
-    };
-
-    struct RGB
-    {
-	std::uint8_t r, g, b;
-    };
-
-    std::unordered_map<Colour, std::array<RGB, 4>> rgb_mappings
-    {
-  	///////////////////////////      Light       ////      Medium      ////       Base       ////       Dark       ///////
-    	{ Colour::light_blue, { { { 0xA3, 0xFB, 0xF0 }, { 0x00, 0xBD, 0xC1 }, { 0x55, 0xC3, 0xC5 }, { 0x00, 0x70, 0x94 } } } },
-    	{ Colour::blue,       { { { 0xA3, 0xC7, 0xFB }, { 0x05, 0x4A, 0xC3 }, { 0x63, 0x9A, 0xC5 }, { 0x00, 0x15, 0x95 } } } },
-    	{ Colour::orange,     { { { 0xFB, 0xCC, 0xA3 }, { 0xC0, 0x55, 0x00 }, { 0xC4, 0xD7, 0x5A }, { 0x91, 0x20, 0x00 } } } },
-    	{ Colour::yellow,     { { { 0xFF, 0xFD, 0xC2 }, { 0xC2, 0xAC, 0x04 }, { 0xC5, 0xC3, 0x6A }, { 0x96, 0x67, 0x00 } } } },
-    	{ Colour::green,      { { { 0xDF, 0xFB, 0xA3 }, { 0x00, 0xC8, 0x15 }, { 0x8C, 0xC6, 0x76 }, { 0x00, 0x96, 0x02 } } } },
-    	{ Colour::purple,     { { { 0xFB, 0xA3, 0xD7 }, { 0xAE, 0x05, 0xBD }, { 0xDA, 0x67, 0xDC }, { 0x6B, 0x00, 0x95 } } } },
-    	{ Colour::red,        { { { 0xFB, 0xA3, 0xAF }, { 0xB9, 0x05, 0x05 }, { 0xC5, 0x55, 0x59 }, { 0x8E, 0x00, 0x00 } } } },
-    	{ Colour::grey,       { { { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 }, { 0x60, 0x60, 0x60 } } } }
-    };    
-
-    void draw_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colour)
-    {
-    	const auto& rgb = rgb_mappings.at(colour);
-	
-    	for (int y = 0; y < 8; y++)
-    	    for (int x = 0; x < 8; x++)
-	    {
-		switch(tetro_tile[y * 8 + x])
-		{
-		case ' ': /* light */  SDL_SetRenderDrawColor(renderer, rgb[0].r, rgb[0].g, rgb[0].b, SDL_ALPHA_OPAQUE); break;
-	 	case '#': /* base */   SDL_SetRenderDrawColor(renderer, rgb[2].r, rgb[2].g, rgb[2].b, SDL_ALPHA_OPAQUE); break;
-		case '?': /* medium */ SDL_SetRenderDrawColor(renderer, rgb[1].r, rgb[1].g, rgb[1].b, SDL_ALPHA_OPAQUE); break;
-		default : /* dark*/    SDL_SetRenderDrawColor(renderer, rgb[3].r, rgb[3].g, rgb[3].b, SDL_ALPHA_OPAQUE); break;
-		}
-
-		SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);
-	    }
-    }
 }
 
 int main()
 {
     constexpr int window_width = 250;
     constexpr int window_height = 250;
+    constexpr auto playfield_pos = Vec(32, 32);
 
     if (SDL_Init(SDL_INIT_VIDEO) == -1)
     {
@@ -139,52 +82,66 @@ int main()
 	    }
 	}
 	
-	// switch (game_state)
-	// {
-	// case GameState::EndGame:
-	// {
-	//     // TODO handle end-game
-	// }
+	switch (game_state)
+	{
+	case GameState::EndGame:
+	{
+	    // TODO handle end-game
+	}
 	  
-	// case GameState::GenerateTetro:
-	// {
-	//     // Generate new tetromino
-	//     current_tetro = Tetromino::get_new_tetro();
-	//     game_state = GameState::LowerTetro;
-	//     break;
-	// }
-	// case GameState::LowerTetro:
-	// {
-	//     // TODO check for input to determine x pos of movement vector
-	//     current_tetro.pos += Vec(0, 1);
+	case GameState::GenerateTetro:
+	{
+	    // Generate new tetromino
+	    current_tetro = Tetromino::get_new_tetro();
+	    game_state = GameState::LowerTetro;
+	    break;
+	}
+	case GameState::LowerTetro:
+	{
+	    // TODO check for input to determine x pos of movement vector
+	    current_tetro.pos += Vec(0, 1);
 
-	//     if (playfield.has_landed(current_tetro))
-	//     {
-	// 	// Cannot lower tetro further tetro.
-	// 	game_state = GameState::TetroLanded;
-	//     }
+	    if (playfield.has_landed(current_tetro))
+	    {
+		// Cannot lower tetro further tetro.
+		game_state = GameState::TetroLanded;
+	    }
 	    
-	//     break;
-	// }
-	// case GameState::TetroLanded:
-	// {
-	//     // Commit current tetro to playfield
-	//     playfield.add_tetro(current_tetro);
-	//     game_state = GameState::GenerateTetro;
-	//     break;
-	// }
-	// case GameState::ClearRows:
-	// {
-	//     // TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
-	//     break;
-	// }
-	// }
+	    break;
+	}
+	case GameState::TetroLanded:
+	{
+	    // Commit current tetro to playfield
+	    playfield.add_tetro(current_tetro);
+	    game_state = GameState::GenerateTetro;
+	    break;
+	}
+	case GameState::ClearRows:
+	{
+	    // TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
+	    break;
+	}
+	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
+	constexpr std::string_view test
+	{
+    "L         "
+    "L     OO  "
+    "LL    00  "
+    "   I   TTT"
+    "   I  SST "
+    "   I SS   "
+    "   I      "
+    "       J  "
+    "ZZ     J  "
+    " ZZ   JJ  "
+	};
+	
 	// TODO rendering stuff goes here
-	draw_tetro_tile(renderer, Vec(50, 50), Colour::purple);
+	render_playfield(renderer, playfield_pos, test);
 
 	SDL_RenderPresent(renderer);
     }

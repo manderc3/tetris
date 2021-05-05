@@ -79,6 +79,11 @@ public:
 	    std::fill_n(playfield.begin() + (row * 10), 10, ' ');
     }
 
+    std::string_view get_playfield() const
+    {
+	return playfield.c_str();
+    }
+
 private:
     std::string playfield
     {		
