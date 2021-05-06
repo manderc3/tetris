@@ -13,7 +13,7 @@ namespace Tetromino
     static constexpr TetroTemplate j_tetro { "     J   J  JJ  " };
     static constexpr TetroTemplate l_tetro { "    L   L   LL  " };
     static constexpr TetroTemplate s_tetro { "         SS SS  " };
-    static constexpr TetroTemplate o_tetro { "        OO  00  " };
+    static constexpr TetroTemplate o_tetro { "        OO  OO  " };
     static constexpr TetroTemplate t_tetro { "        TTT  T  " };
     static constexpr TetroTemplate z_tetro { "        ZZ   ZZ " };
 

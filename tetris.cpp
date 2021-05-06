@@ -95,7 +95,7 @@ int main()
 	    }
 	}
 
-	if (duration_elapsed(frame_epoch, 1000 / 60))
+	if (duration_elapsed(frame_epoch, 1000 / 15))
 	{
 	    switch (game_state)
 	    {
@@ -144,31 +144,7 @@ int main()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-    // 	constexpr std::string_view test
-    // 	{
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // 	    "          "
-    // "L         "
-    // "L     OO  "
-    // "LL    OO  "
-    // "   I   TTT"
-    // "   I  SST "
-    // "   I SS   "
-    // "   I      "
-    // "       J  "
-    // "ZZ     J  "
-    // " ZZ   JJ  "		
-//	};
-
-	render_playfield(renderer, playfield_pos, playfield.get_playfield());
+	render_playfield(renderer, playfield_pos, playfield.get_playfield(), current_tetro);
 
 	SDL_RenderPresent(renderer);
     }
