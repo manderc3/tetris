@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <cassert>
-#include <ctime>
+#include <chrono>
 #include <iostream>
 #include <random>
 #include <string>
@@ -25,12 +25,19 @@ namespace
 	TetroLanded,
 	ClearRows
     };
+
+    bool duration_elapsed(const std::chrono::time_point<std::chrono::steady_clock>& epoch, int duration)
+    {
+	using namespace std::chrono;
+  
+	return duration_cast<milliseconds>(steady_clock::now() - epoch).count() > duration;
+    }
 }
 
 int main()
 {
-    constexpr int window_width = 250;
-    constexpr int window_height = 250;
+    constexpr int window_width = 300;
+    constexpr int window_height = 300;
     constexpr auto playfield_pos = Vec(32, 32);
 
     if (SDL_Init(SDL_INIT_VIDEO) == -1)
@@ -60,16 +67,22 @@ int main()
     auto game_state = GameState::LowerTetro;
     auto current_tetro = Tetromino::get_new_tetro();
 
+    auto frame_epoch = std::chrono::steady_clock::now();
+    
     for(;;)
     {
 	// input handling
-	if (SDL_Event e; SDL_PollEvent(&e)) {
-	    if (e.type == SDL_QUIT) {
+	if (SDL_Event e; SDL_PollEvent(&e))
+	{
+	    if (e.type == SDL_QUIT)
+	    {
 		break;
 	    }
 
-	    if (e.type == SDL_KEYDOWN) {
-		switch(e.key.keysym.sym) {
+	    if (e.type == SDL_KEYDOWN)
+	    {
+		switch(e.key.keysym.sym)
+		{
 		case SDLK_UP:
 		    break;
 		case SDLK_DOWN:
@@ -81,67 +94,81 @@ int main()
 		}
 	    }
 	}
-	
-	switch (game_state)
-	{
-	case GameState::EndGame:
-	{
-	    // TODO handle end-game
-	}
-	  
-	case GameState::GenerateTetro:
-	{
-	    // Generate new tetromino
-	    current_tetro = Tetromino::get_new_tetro();
-	    game_state = GameState::LowerTetro;
-	    break;
-	}
-	case GameState::LowerTetro:
-	{
-	    // TODO check for input to determine x pos of movement vector
-	    current_tetro.pos += Vec(0, 1);
 
-	    if (playfield.has_landed(current_tetro))
+	if (duration_elapsed(frame_epoch, 1000 / 60))
+	{
+	    switch (game_state)
 	    {
-		// Cannot lower tetro further tetro.
-		game_state = GameState::TetroLanded;
+	    case GameState::EndGame:
+	    {
+		// TODO handle end-game
 	    }
+	  
+	    case GameState::GenerateTetro:
+	    {
+		// Generate new tetromino
+		current_tetro = Tetromino::get_new_tetro();
+		game_state = GameState::LowerTetro;
+		break;
+	    }
+	    case GameState::LowerTetro:
+	    {
+		// TODO check for input to determine x pos of movement vector
+		current_tetro.pos += Vec(0, 1);
+
+		if (playfield.has_landed(current_tetro))
+		{
+		    // Cannot lower tetro further tetro.
+		    game_state = GameState::TetroLanded;
+		}
 	    
-	    break;
-	}
-	case GameState::TetroLanded:
-	{
-	    // Commit current tetro to playfield
-	    playfield.add_tetro(current_tetro);
-	    game_state = GameState::GenerateTetro;
-	    break;
-	}
-	case GameState::ClearRows:
-	{
-	    // TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
-	    break;
-	}
+		break;
+	    }
+	    case GameState::TetroLanded:
+	    {
+		// Commit current tetro to playfield
+		playfield.add_tetro(current_tetro);
+		game_state = GameState::GenerateTetro;
+		break;
+	    }
+	    case GameState::ClearRows:
+	    {
+		// TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
+		break;
+	    }
+	    }
+
+	    frame_epoch = std::chrono::steady_clock::now();
 	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	constexpr std::string_view test
-	{
-    "L         "
-    "L     OO  "
-    "LL    00  "
-    "   I   TTT"
-    "   I  SST "
-    "   I SS   "
-    "   I      "
-    "       J  "
-    "ZZ     J  "
-    " ZZ   JJ  "
-	};
-	
-	// TODO rendering stuff goes here
-	render_playfield(renderer, playfield_pos, test);
+    // 	constexpr std::string_view test
+    // 	{
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // 	    "          "
+    // "L         "
+    // "L     OO  "
+    // "LL    OO  "
+    // "   I   TTT"
+    // "   I  SST "
+    // "   I SS   "
+    // "   I      "
+    // "       J  "
+    // "ZZ     J  "
+    // " ZZ   JJ  "		
+//	};
+
+	render_playfield(renderer, playfield_pos, playfield.get_playfield());
 
 	SDL_RenderPresent(renderer);
     }

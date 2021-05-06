@@ -15,7 +15,7 @@ static constexpr std::string_view tetro_tile
     "@@@@@@@@"
 };
 
-static constexpr std::int8_t tile_size = 8;
+static constexpr int tile_size = 8;
 
 void render_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colour)
 {
@@ -41,7 +41,7 @@ void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const st
     assert(playfield_pos.x % 8 == 0);
     assert(playfield_pos.y % 8 == 0);
 	
-    for (int y = 0; y < 10; y++)
+    for (int y = 0; y < 20; y++)
 	for (int x = 0; x < 10; x++)
 	{
 	    const auto pos = Vec(playfield_pos.x + (x * tile_size), playfield_pos.y + (y * tile_size));

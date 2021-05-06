@@ -3,7 +3,7 @@
 
 struct Vec
 {
-    constexpr Vec(std::int8_t x, std::int8_t y) : x(x), y(y) {};
+    constexpr Vec(int x, int y) : x(x), y(y) {};
     constexpr Vec(const Vec&) = default;
     constexpr Vec(Vec&&) = default;
     
@@ -16,7 +16,7 @@ struct Vec
     template<typename T>
     constexpr auto operator -= (const T&& rhs) { x -= rhs.x; y -= rhs.y; };
 
-    std::int8_t x, y;
+    int x, y;
 };
 
 // Based on the given tetro template, determine an offset to adjust the ypos by to ensure that the tetromino appears at the top.
