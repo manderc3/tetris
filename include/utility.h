@@ -41,4 +41,11 @@ int get_ypos_offset(const std::string_view& t_template)
     return offset;
 }
 
+enum class Direction : std::int8_t
+{
+    None,
+    Left,
+    Right,
+};
+
 #endif

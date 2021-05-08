@@ -25,7 +25,7 @@ namespace
 	TetroLanded,
 	ClearRows
     };
-
+    
     bool duration_elapsed(const std::chrono::time_point<std::chrono::steady_clock>& epoch, int duration)
     {
 	using namespace std::chrono;
@@ -39,6 +39,7 @@ int main()
     constexpr int window_width = 300;
     constexpr int window_height = 300;
     constexpr auto playfield_pos = Vec(32, 32);
+    Direction input_direction = Direction::None;
 
     if (SDL_Init(SDL_INIT_VIDEO) == -1)
     {
@@ -79,20 +80,24 @@ int main()
 		break;
 	    }
 
-	    if (e.type == SDL_KEYDOWN)
-	    {
-		switch(e.key.keysym.sym)
+	    else if (e.type == SDL_KEYUP || e.type == SDL_KEYDOWN)
+            {
+                auto key_state = SDL_GetKeyboardState(nullptr);
+
+                if (key_state[SDL_SCANCODE_LEFT])
 		{
-		case SDLK_UP:
-		    break;
-		case SDLK_DOWN:
-		    break;
-		case SDLK_LEFT:
-		    break;
-		case SDLK_RIGHT:
-		    break;
+		    input_direction = Direction::Left;
+
 		}
-	    }
+		else if (key_state[SDL_SCANCODE_RIGHT])
+		{
+		    input_direction = Direction::Right;
+		}
+		else
+		{
+		    input_direction = Direction::None;
+		}
+            }
 	}
 
 	if (duration_elapsed(frame_epoch, 1000 / 15))
@@ -115,6 +120,22 @@ int main()
 	    {
 		// TODO check for input to determine x pos of movement vector
 		current_tetro.pos += Vec(0, 1);
+
+		// Check if the player has attempted to move the tetro to either side
+		switch(input_direction)
+		{
+		case Direction::Left:
+		    if (playfield.can_move(current_tetro, Direction::Left))
+			current_tetro.pos += Vec(-1, 0);
+		    break;
+		case Direction::Right:
+    		    if (playfield.can_move(current_tetro, Direction::Right))
+			current_tetro.pos += Vec(1, 0);
+		    break;
+		default:
+		    // No movement
+		    break;
+		}
 
 		if (playfield.has_landed(current_tetro))
 		{

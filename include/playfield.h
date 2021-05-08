@@ -1,6 +1,10 @@
 #ifndef PLAYFIELD_H
 #define PLAYFIELD_H
 
+#include <cassert>
+#include <vector>
+#include "utility.h"
+
 class PlayField
 {
 public:	
@@ -48,7 +52,26 @@ public:
 	    }
     }
 
-    bool has_landed(const Tetromino::Tetromino& tetro) noexcept
+    bool can_move(const Tetromino::Tetromino& tetro, const Direction direction) const noexcept
+    {
+	assert(direction == Direction::Left || direction == Direction::Right);
+
+	const int x_vec = direction == Direction::Left ? -1 : 1;
+	const auto new_pos = Vec(tetro.pos.x + x_vec, tetro.pos.y);
+
+	for (int y = 0; y < 4; y++)
+	    for (int x = 0; x < 4; x++)
+		if (tetro.t_template[y * 4 + x] != ' ')
+		{
+		    if (int offset = new_pos.x + x; offset >= 10 || offset <= 0 || playfield[(new_pos.y + y) * 10 + offset] != ' ')
+		       return false;
+		}
+		 
+
+	return true;
+    }
+
+    bool has_landed(const Tetromino::Tetromino& tetro) const noexcept
     {
 	/* for (int y = 0; y < 4; y++) */
 	/*     for (int x = 0; x < 4; x++) */
