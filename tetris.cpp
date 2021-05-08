@@ -149,12 +149,20 @@ int main()
 	    {
 		// Commit current tetro to playfield
 		playfield.add_tetro(current_tetro);
-		game_state = GameState::GenerateTetro;
+		game_state = GameState::ClearRows;
 		break;
 	    }
 	    case GameState::ClearRows:
 	    {
-		// TODO - Check for rull rows, clear them, lower higher rows, check again, repeat, then transition to the GenerateTetro state
+		auto full_rows = playfield.get_full_rows();
+		while (!full_rows.empty())
+		{
+		    playfield.clear(full_rows);
+		    playfield.lower_tetros();
+		    full_rows = playfield.get_full_rows();
+		}
+
+		game_state = GameState::GenerateTetro;
 		break;
 	    }
 	    }

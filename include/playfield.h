@@ -2,6 +2,7 @@
 #define PLAYFIELD_H
 
 #include <cassert>
+#include <functional>
 #include <vector>
 #include "utility.h"
 
@@ -85,15 +86,30 @@ public:
 	std::fill(playfield.begin(), playfield.end(), ' ');
     }
 
-    void clear(const std::vector<std::int8_t>& rows)
+    void clear(const std::vector<int>& rows)
     {
 	for (const auto row : rows)
 	    std::fill_n(playfield.begin() + (row * 10), 10, ' ');
     }
 
+    void lower_tetros()
+    {
+	
+    }
+
     std::string_view get_playfield() const
     {
 	return playfield.c_str();
+    }
+
+    std::vector<int> get_full_rows() const
+    {
+	return get_rows([] (const char tile) { return tile == ' '; });
+    }
+
+    std::vector<int> get_empty_rows() const
+    {
+	return get_rows([] (const char tile) { return tile != ' '; });
     }
 
 private:
@@ -124,7 +140,29 @@ private:
     void set_tile(int x, int y, char val) noexcept
     {
 	playfield[y * 10 + x] = val;
-    }	
+    }
+
+    std::vector<int> get_rows(const std::function<bool(char)>& predicate) const
+    {
+	std::vector<int> rows;
+	
+	for (int y = 0; y < 20; y++)
+	{
+	    bool satisfied = true;
+
+	    for (int x = 0; x < 10; x++)
+       		if (predicate(playfield[y * 10 + x]))
+		{
+		    satisfied = false;
+		    break;		    
+		}
+
+	    if (satisfied)
+		rows.push_back(y);
+	}
+
+	return rows;
+    }
 };
 
 
