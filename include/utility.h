@@ -46,6 +46,7 @@ enum class Direction : std::int8_t
     None,
     Left,
     Right,
+    Down
 };
 
 #endif

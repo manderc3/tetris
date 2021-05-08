@@ -54,41 +54,30 @@ public:
 
     bool can_move(const Tetromino::Tetromino& tetro, const Direction direction) const noexcept
     {
-	assert(direction == Direction::Left || direction == Direction::Right);
+	auto vel = [] (const Direction direction, const Direction option_a, const Direction option_b)
+	{
+	    if (direction == option_a) return -1;
+	    if (direction == option_b) return  1;
 
-	const int x_vec = direction == Direction::Left ? -1 : 1;
-	const auto new_pos = Vec(tetro.pos.x + x_vec, tetro.pos.y);
+	    return 0;
+	};
+	
+	const int x_vel = vel(direction, Direction::Left, Direction::Right);
+	const int y_vel = direction == Direction::Down ? 1 : 0;
+
+	const auto new_pos = Vec(tetro.pos.x + x_vel, tetro.pos.y + y_vel);
 
 	for (int y = 0; y < 4; y++)
 	    for (int x = 0; x < 4; x++)
 		if (tetro.t_template[y * 4 + x] != ' ')
 		{
-		    if (int offset = new_pos.x + x; offset >= 10 || offset <= 0 || playfield[(new_pos.y + y) * 10 + offset] != ' ')
-		       return false;
+		    int x_offset = new_pos.x + x, y_offset = new_pos.y + y;
+
+		    if (x_offset >= 10 || x_offset <= 0 || y_offset >= 20 || playfield[y_offset * 10 + x_offset] != ' ')
+			return false;
 		}
-		 
 
 	return true;
-    }
-
-    bool has_landed(const Tetromino::Tetromino& tetro) const noexcept
-    {
-	/* for (int y = 0; y < 4; y++) */
-	/*     for (int x = 0; x < 4; x++) */
-	/*     {		     */
-	/* 	if (char tile = tetro.t_template[y * 4 + x]; tile != ' ') */
-	/* 	{ */
-	/* 	    if (y == 4 || tetro.t_template[(y + 1) * 4 + x) == ' ') */
-	/* 	    { */
-	/* 		// current dealing with a section of the tetromino that can collide */
-			
-	/* 	    } */
-	/* 	    set_tile(tetro.pos.x + x, tetro.pos.y + y, tile); */
-	/* 	} */
-	/*     }	 */
-
-	// TODO: Code for checking that current tetro has landed on another
-	return tetro.pos.y + 4 == 20;
     }
 
     void clear_all() noexcept

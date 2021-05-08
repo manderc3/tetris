@@ -137,7 +137,7 @@ int main()
 		    break;
 		}
 
-		if (playfield.has_landed(current_tetro))
+		if (!playfield.can_move(current_tetro, Direction::Down))
 		{
 		    // Cannot lower tetro further tetro.
 		    game_state = GameState::TetroLanded;
