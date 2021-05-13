@@ -10,21 +10,13 @@ class PlayField
 {
 public:	
     // utility for printing the ascii representation of the playfield
-    void print(const Tetromino::Tetromino& tetro) const noexcept
-    {
-	// take a copy of the playfield and apply the current tetromino on top
-	std::string playfield_copy(playfield.data());
-
-	for (int y = 0; y < 4; y++)
-	    for (int x = 0; x < 4; x++)
-		if (char tile = tetro.t_template[y * 4 + x]; tile != ' ' && tetro.pos.y + y >= 0)
-		    playfield_copy[(tetro.pos.y + y) * 10 + tetro.pos.x + x] = tile;
-	
+    void print() const noexcept
+    {	
 	for (int y = 0; y < 20; y++)
 	{
 	    for (int x = 0; x < 10; x++)
 	    {
-		if (char tile = playfield_copy[y * 10 + x]; tile == ' ')
+		if (char tile = playfield[y * 10 + x]; tile == ' ')
 		    std::cout << '-';
 		else
 		{
@@ -74,7 +66,7 @@ public:
 		{
 		    int x_offset = new_pos.x + x, y_offset = new_pos.y + y;
 
-		    if (x_offset >= 10 || x_offset <= 0 || y_offset >= 20 || playfield[y_offset * 10 + x_offset] != ' ')
+		    if (x_offset >= 10 || x_offset < 0 || y_offset >= 20 || playfield[y_offset * 10 + x_offset] != ' ')
 			return false;
 		}
 
@@ -92,7 +84,7 @@ public:
 	    std::fill_n(playfield.begin() + (row * 10), 10, ' ');
     }
 
-    void lower_tetros()
+    void compress()
     {
 	
     }
@@ -141,7 +133,7 @@ private:
     {
 	playfield[y * 10 + x] = val;
     }
-
+    
     std::vector<int> get_rows(const std::function<bool(char)>& predicate) const
     {
 	std::vector<int> rows;

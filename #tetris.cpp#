@@ -182,7 +182,7 @@ int main()
 
 	if (render_current_tetro)
 	{
-	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), std::make_optional<Tetromino::Tetromino>(current_tetro));
+	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), &);
 	}
 	else
 	{
