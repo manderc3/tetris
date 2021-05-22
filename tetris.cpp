@@ -115,6 +115,9 @@ int main()
 		// Generate new tetromino
 		current_tetro = Tetromino::get_new_tetro();
 		game_state = GameState::LowerTetro;
+
+		// Ensure current_tetro will be rendered
+		render_current_tetro = true;
 		break;
 	    }
 	    case GameState::LowerTetro:
@@ -152,7 +155,7 @@ int main()
 		playfield.add_tetro(current_tetro);
 		game_state = GameState::ClearRows;
 
-		// do not render current tetro for the next frame
+		// do not render current tetro until a new tetro has been generated
 		render_current_tetro = false;
 		break;
 	    }
@@ -179,15 +182,13 @@ int main()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-
 	if (render_current_tetro)
 	{
-	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), std::make_optional<Tetromino::Tetromino>(current_tetro));
+	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), &current_tetro);
 	}
 	else
 	{
-	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), std::nullopt);
-	    render_current_tetro = true;
+	    render_playfield(renderer, playfield_pos, playfield.get_playfield());
 	}
 
 	SDL_RenderPresent(renderer);

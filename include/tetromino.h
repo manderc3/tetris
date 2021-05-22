@@ -55,8 +55,8 @@ namespace Tetromino
 
     Tetromino get_new_tetro()
     {
-//	const auto new_tetro_template = get_tetro_template(0);
-	const auto new_tetro_template = get_tetro_template(std::rand() % 7);
+	const auto new_tetro_template = get_tetro_template(0);
+//	const auto new_tetro_template = get_tetro_template(std::rand() % 7);
 	return Tetromino(Vec(4, 0 - get_ypos_offset(new_tetro_template) - 1), new_tetro_template);
     }
 }

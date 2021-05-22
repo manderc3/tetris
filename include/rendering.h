@@ -38,18 +38,21 @@ void render_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const Colour colo
 	}
 }
 
-void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const std::string_view& playfield, const std::optional<Tetromino::Tetromino>& current_tetro)
+void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const std::string_view& playfield, Tetromino::Tetromino* current_tetro = nullptr)
 {
     assert(playfield_pos.x % 8 == 0);
     assert(playfield_pos.y % 8 == 0);
 
     std::string playfield_copy(playfield.data());
 
-    for (int y = 0; y < 4; y++)
+    if (current_tetro != nullptr)
+    {
+	for (int y = 0; y < 4; y++)
 	for (int x = 0; x < 4; x++)
 	    if (char tile = current_tetro->t_template[y * 4 + x]; tile != ' ' && current_tetro->pos.y + y >= 0)
 		playfield_copy[(current_tetro->pos.y + y) * 10 + current_tetro->pos.x + x] = tile;
-	
+    }
+    	
     for (int y = 0; y < 20; y++)
 	for (int x = 0; x < 10; x++)
 	{
