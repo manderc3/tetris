@@ -86,7 +86,16 @@ public:
 
     void compress()
     {
-	
+	auto empty_rows = get_empty_rows();
+
+	for (const auto row : get_empty_rows())
+	{
+	    // delete empty row
+	    playfield.erase(row * 10, 10);
+
+	    // add a new empty row to the beginning to force the tetros above the deleted row to be lowered by one
+	    playfield.insert(0, 10, ' ');
+	}	
     }
 
     std::string_view get_playfield() const
