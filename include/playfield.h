@@ -9,25 +9,6 @@
 class PlayField
 {
 public:	
-    // utility for printing the ascii representation of the playfield
-    void print() const noexcept
-    {	
-	for (int y = 0; y < 20; y++)
-	{
-	    for (int x = 0; x < 10; x++)
-	    {
-		if (char tile = playfield[y * 10 + x]; tile == ' ')
-		    std::cout << '-';
-		else
-		{
-		    std::cout << tile;
-		}
-	    }
-		 
-	    std::cout << '\n';
-	}
-    }
-
     char at(int x, int y) const noexcept
     {
 	return playfield[y * 10 + x];
@@ -35,10 +16,12 @@ public:
 
     void add_tetro(const Tetromino::Tetromino& tetro) noexcept
     {
+	const auto orientation = tetro.t_template[tetro.current_orientation()];
+	
 	for (int y = 0; y < 4; y++)
 	    for (int x = 0; x < 4; x++)
 	    {		    
-		if (char tile = tetro.t_template[y * 4 + x]; tile != ' ')
+		if (char tile = orientation[y * 4 + x]; tile != ' ')
 		{
 		    set_tile(tetro.pos.x + x, tetro.pos.y + y, tile);
 		}
@@ -59,10 +42,11 @@ public:
 	const int y_vel = direction == Direction::Down ? 1 : 0;
 
 	const auto new_pos = Vec(tetro.pos.x + x_vel, tetro.pos.y + y_vel);
-
+	const auto orientation = tetro.t_template[tetro.current_orientation()];
+	    
 	for (int y = 0; y < 4; y++)
 	    for (int x = 0; x < 4; x++)
-		if (tetro.t_template[y * 4 + x] != ' ')
+		if (orientation[y * 4 + x] != ' ')
 		{
 		    int x_offset = new_pos.x + x, y_offset = new_pos.y + y;
 
