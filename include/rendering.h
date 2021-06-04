@@ -1,6 +1,7 @@
 #ifndef RENDERING_H
 #define RENDERING_H
 
+#include <algorithm>
 #include <optional>
 
 #include "colour.h"
@@ -43,19 +44,21 @@ void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const st
     assert(playfield_pos.x % 8 == 0);
     assert(playfield_pos.y % 8 == 0);
 
-    std::string playfield_copy(playfield.data());
+    std::string playfield_copy(playfield);
 
     if (tetro != nullptr)
     {
-	const auto orientation = tetro->t_template[tetro->current_orientation()];
-	
-	for (int y = 0; y < 4; y++)
-	for (int x = 0; x < 4; x++)
-	    if (char tile = orientation[y * 4 + x]; tile != ' ' && tetro->pos.y + y >= 0)
-		playfield_copy[(tetro->pos.y + y) * 10 + tetro->pos.x + x] = tile;
+    	const auto orientation = tetro->t_template[tetro->current_orientation()];
+    	const auto templ_size = tetro->t_template.templ_size;
+
+    	for (int y = 0; y < templ_size; y++)
+	    for (int x = 0; x < templ_size; x++)
+		if (char tile(orientation[y * templ_size + x]); tile != ' ' && tetro->pos.y + y >= 0)	
+		    playfield_copy[(tetro->pos.y + y) * 10 + tetro->pos.x + x] = tile;
     }
     	
     for (int y = 0; y < 20; y++)
+    {
 	for (int x = 0; x < 10; x++)
 	{
 	    const auto pos = Vec(playfield_pos.x + (x * tile_size), playfield_pos.y + (y * tile_size));
@@ -72,6 +75,7 @@ void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const st
 	    default: break;					    
 	    }
 	}
+    }
 }
 
 #endif

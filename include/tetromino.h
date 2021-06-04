@@ -2,6 +2,7 @@
 #define TETROMINO_H
 
 #include <array>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -12,38 +13,37 @@ namespace Tetromino
     class TetroTemplate
     {
     public:
-	template<typename... T>
-	constexpr TetroTemplate(T... ts) : templs{ts...}
+        TetroTemplate(std::array<std::string, 4>&& init) : templs(init)
 	{
 	    for (templ_size = 2; templ_size < 10; templ_size++)
-		if (templs[0].length() / templ_size == templ_size)
+		if (static_cast<int>(templs[0].length()) / templ_size == templ_size)
 		    break;
 	}
 
-	constexpr std::string_view operator[](const std::size_t index) const
+	std::string_view operator[](const std::size_t index) const
 	{
 	    return templs[index];
 	}
 
-	std::size_t templ_size;
+	int templ_size;
 
     private:
-	std::array<std::string_view, 4> templs;
+	std::array<std::string, 4> templs;
     };
     
     // The template of all of the available tetrominos in the game.    
-    constexpr TetroTemplate i_tetro ( "    IIII        ", "  I   I   I   I ", "        IIII    " , " I   I   I   I  " );
-    constexpr TetroTemplate o_tetro ( " OO  OO     ", " OO  OO     ", " OO  OO     ", " OO  OO     " );
-    constexpr TetroTemplate j_tetro ( "J  JJJ   ", "J  JJJ   ", "J  JJJ   ", "J  JJJ   " ); 
-    constexpr TetroTemplate l_tetro ( "  LLLL   ", " L  L  LL", "   LLLL  ", "LL  L  L " ); 
-    constexpr TetroTemplate s_tetro ( " SSSS    ", " S  SS  S", "    SSSS ", "S  SS  S " ); 
-    constexpr TetroTemplate t_tetro ( " T TTT   ", " T  TT T ", "   TTT T ", " T TT  T " ); 
-    constexpr TetroTemplate z_tetro ( "ZZ  ZZ   ", "  Z ZZ Z ", "   ZZ  ZZ", " Z ZZ Z  " ); 
-    
+    TetroTemplate i_tetro ({ "    IIII        ", "  I   I   I   I ", "        IIII    " , " I   I   I   I  " });
+    TetroTemplate o_tetro ({ "OO OO    ", "OO OO    ", "OO OO    ", "OO OO    " });
+    TetroTemplate j_tetro ({ "J  JJJ   ", "J  JJJ   ", "J  JJJ   ", "J  JJJ   " });
+    TetroTemplate l_tetro ({ "  LLLL   ", " L  L  LL", "   LLLL  ", "LL  L  L " });
+    TetroTemplate s_tetro ({ " SSSS    ", " S  SS  S", "    SSSS ", "S  SS  S " });
+    TetroTemplate t_tetro ({ " T TTT   ", " T  TT T ", "   TTT T ", " T TT  T " });
+    TetroTemplate z_tetro ({ "ZZ  ZZ   ", "  Z ZZ Z ", "   ZZ  ZZ", " Z ZZ Z  " });
+
     class Tetromino
     {
     public:
-	Tetromino(const Vec pos, TetroTemplate t_template) : pos(pos), t_template(t_template) {};
+	Tetromino(const Vec pos, const TetroTemplate& t_template) : pos(pos), t_template(t_template) {};
 
 	Tetromino& operator=(Tetromino&&) = default;
 	
