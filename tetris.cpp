@@ -94,6 +94,10 @@ int main()
 		{
 		    input_direction = Direction::Right;
 		}
+		else if (key_state[SDL_SCANCODE_A] && playfield.can_rotate(current_tetro))
+		{
+		    current_tetro.rotate();
+		}
 		else
 		{
 		    input_direction = Direction::None;

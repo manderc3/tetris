@@ -78,6 +78,21 @@ public:
 	return true;
     }
 
+    bool can_rotate(const Tetromino::Tetromino& current) const
+    {
+	const auto next_orientation = current.t_template[current.next_orientation()];
+	const auto tetro_size = current.t_template.templ_size;
+
+	for (int y = 0; y < tetro_size; y++)
+	    for (int x = 0; x < tetro_size; x++)
+	    {
+		if (next_orientation[y * tetro_size + x] != ' ' && playfield[(current.pos.y + y) * 10 + current.pos.x + x] != ' ')
+		    return false;
+	    }
+
+	return true;
+    }
+
     void clear_all() noexcept
     {
 	std::fill(playfield.begin(), playfield.end(), ' ');
