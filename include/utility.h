@@ -1,6 +1,8 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include <string_view>
+
 struct Vec
 {
     constexpr Vec(int x, int y) : x(x), y(y) {};
@@ -20,26 +22,7 @@ struct Vec
 };
 
 // Based on the given tetro template, determine an offset to adjust the ypos by to ensure that the tetromino appears at the top.
-int get_ypos_offset(const std::string_view& t_template)
-{
-    auto row_empty = [&t_template] (const int row)
-    {
-	for (int x = 0; x < 4; x++)
-	{
-	    if (t_template[row * 4 + x] != ' ')
-		return false;
-	}
-
-	return true;
-    };
-
-    int offset = 0;
-    for(; row_empty(offset); offset++)
-    {	
-    }
-
-    return offset;
-}
+extern int get_ypos_offset(const std::string_view& t_template);
 
 enum class Direction : std::int8_t
 {

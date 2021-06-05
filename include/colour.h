@@ -20,7 +20,7 @@ struct RGB
     std::uint8_t r, g, b;
 };
 
-std::unordered_map<Colour, std::array<RGB, 4>> rgb_mappings
+static std::unordered_map<Colour, std::array<RGB, 4>> rgb_mappings
 {
     ///////////////////////////      Light       ////      Medium      ////       Base       ////       Dark       ///////
     { Colour::light_blue, { { { 0xA3, 0xFB, 0xF0 }, { 0x00, 0xBD, 0xC1 }, { 0x55, 0xC3, 0xC5 }, { 0x00, 0x70, 0x94 } } } },

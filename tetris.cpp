@@ -188,11 +188,11 @@ int main()
 
 	if (render_current_tetro)
 	{
-	    render_playfield(renderer, playfield_pos, playfield.get_playfield(), &current_tetro);
+	    Rendering::render_playfield(renderer, playfield_pos, playfield.get_playfield(), &current_tetro);
 	}
 	else
 	{
-	    render_playfield(renderer, playfield_pos, playfield.get_playfield());
+	    Rendering::render_playfield(renderer, playfield_pos, playfield.get_playfield());
 	}
 
 	SDL_RenderPresent(renderer);
