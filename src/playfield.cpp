@@ -105,8 +105,6 @@ void PlayField::clear(const std::vector<int>& rows)
 
 void PlayField::compress()
 {
-    auto empty_rows = get_empty_rows();
-
     for (const auto row : get_empty_rows())
     {
 	// delete empty row
