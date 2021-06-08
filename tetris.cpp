@@ -15,6 +15,7 @@
 #include "include/playfield.h"
 #include "include/colour.h"
 #include "include/rendering.h"
+#include "include/timer.h"
 
 namespace
 {
@@ -27,14 +28,6 @@ namespace
 	ClearRows
     };
 
-    template<typename T>
-    bool duration_elapsed(const std::chrono::time_point<std::chrono::steady_clock>& epoch, const int duration)
-    {
-	using namespace std::chrono;
-  
-	return duration_cast<T>(steady_clock::now() - epoch).count() > duration;
-    }
-
     // when player presses down the tetromino descends at maximum velocity
     bool apply_booster = false;
     
@@ -45,10 +38,7 @@ namespace
     constexpr int window_height = 300;
     
     constexpr auto playfield_pos = Vec(32, 32);
-    
-    // time between increment of game speed
-    constexpr auto speed_interval = std::chrono::minutes(1);
-
+  
     // mappings between game level and descent    
     const std::unordered_map<std::int8_t, std::int8_t> game_speeds
     {
@@ -60,8 +50,7 @@ namespace
 	{6,  0},    
     };
 
-    auto land_delay_timer = std::chrono::steady_clock::now();
-    int land_delay_interval = 1;
+    auto land_delay_timer = Time::Timer<std::chrono::seconds>(1);
 
     bool land_delay_timer_started = false;
     
@@ -122,10 +111,10 @@ int main()
     auto current_tetro = Tetromino::get_new_tetro();
     bool render_current_tetro = true;
     
-    auto frame_epoch = std::chrono::steady_clock::now();
+    auto frame_timer = Time::Timer<std::chrono::milliseconds>(1000 / frame_rate);
 
     // the last time the speed increased (or the beginning of the game if the speed has yet to increase)
-    auto speed_epoch = std::chrono::steady_clock::now();
+    auto speed_timer = Time::Timer<std::chrono::minutes>(1);
     
     for(;;)
     {
@@ -168,14 +157,13 @@ int main()
             }
 	}
 
-	if (duration_elapsed<std::chrono::minutes>(speed_epoch, 0.1) && current_level < 6)
+	if (speed_timer.duration_elapsed() && current_level < 6)
 	{
-	    speed_epoch = std::chrono::steady_clock::now();
-
+	    speed_timer.reset();
 	    current_level++;
 	}
 
-	if (duration_elapsed<std::chrono::milliseconds>(frame_epoch, 1000 / frame_rate))
+	if (frame_timer.duration_elapsed())
 	{
 	    switch (game_state)
 	    {
@@ -225,12 +213,12 @@ int main()
 		if (!land_delay_timer_started)
 		{
 		    land_delay_timer_started = true;
-		    land_delay_timer = std::chrono::steady_clock::now();
+		    land_delay_timer.reset();
 		}
 		
 		if (land_delay_timer_started)
 		{
-		    if (duration_elapsed<std::chrono::seconds>(land_delay_timer, land_delay_interval))
+		    if (land_delay_timer.duration_elapsed())
 		    {
 			// Commit current tetro to playfield
 			playfield.add_tetro(current_tetro);
@@ -274,7 +262,7 @@ int main()
 	    }
 	    }
 
-	    frame_epoch = std::chrono::steady_clock::now();
+	    frame_timer.reset();
 	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
