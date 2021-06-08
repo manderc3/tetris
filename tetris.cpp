@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <map>
 
 #include <SDL2/SDL.h>
 
@@ -39,12 +40,6 @@ namespace
     // booster is applied temporarily to the game_speed variable when the player presses down
     constexpr std::int8_t booster = 5;
     
-    // the speed of which the tetrominoes fall. the higher the number, the faster the descent
-    std::int8_t game_speed = 20;
-
-    // count down
-    std::int8_t descent_delay = game_speed;
-
     constexpr int frame_rate = 60;
 
     constexpr int window_width = 300;
@@ -55,6 +50,17 @@ namespace
 
     // time between increment of game speed
     constexpr auto speed_interval = std::chrono::minutes(1);
+
+    // mappings between game level and descent    
+    const std::unordered_map<std::int8_t, std::int8_t> game_speeds
+    {
+	{1, 20},
+	{2, 16},
+	{3, 12},
+	{4,  8},
+	{5,  4},
+	{6,  0},    
+    };
 }
 
 int main()
@@ -86,6 +92,9 @@ int main()
     // TODO use the newer random library
     std::srand(std::time(nullptr));
 
+    std::int8_t current_level = 1;
+    std::int8_t descent_delay = game_speeds.at(current_level);
+    
     auto game_state = GameState::LowerTetro;
     auto current_tetro = Tetromino::get_new_tetro();
     bool render_current_tetro = true;
@@ -135,10 +144,11 @@ int main()
             }
 	}
 
-	if (duration_elapsed<std::chrono::minutes>(speed_epoch, 0.1) && game_speed > 0)
+	if (duration_elapsed<std::chrono::minutes>(speed_epoch, 0.1) && current_level < 6)
 	{
-	    game_speed -= 2;
 	    speed_epoch = std::chrono::steady_clock::now();
+
+	    current_level++;
 	}
 
 	if (duration_elapsed<std::chrono::milliseconds>(frame_epoch, 1000 / frame_rate))
@@ -167,14 +177,14 @@ int main()
 		    // lower the tetromino
 		    current_tetro.pos += Vec(0, 1);
 		    
-		    descent_delay = game_speed;
+		    descent_delay = game_speeds.at(current_level);
 		}
 		else		    
 		{
 		    --descent_delay;
 		}
-
-		// Check if the player has attempted to move the tetro to either side
+		    
+		    // Check if the player has attempted to move the tetro to either side
 		switch(input_direction)
 		{
 		case Direction::Left:
@@ -182,7 +192,7 @@ int main()
 			current_tetro.pos += Vec(-1, 0);
 		    break;
 		case Direction::Right:
-    		    if (playfield.can_move(current_tetro, Direction::Right))
+		    if (playfield.can_move(current_tetro, Direction::Right))
 			current_tetro.pos += Vec(1, 0);
 		    break;
 		default:
