@@ -32,13 +32,27 @@ namespace
   
 	return duration_cast<milliseconds>(steady_clock::now() - epoch).count() > duration;
     }
+
+    // booster is applied temporarily to the game_speed variable when the player presses down
+    constexpr std::int8_t booster = 5;
+    
+    // the speed of which the tetrominoes fall. the higher the number, the faster the descent
+    std::int8_t game_speed = 5;
+
+    // count down
+    std::int8_t descent_delay = game_speed;
+
+    constexpr int frame_rate = 60;
+
+    constexpr int window_width = 300;
+    
+    constexpr int window_height = 300;
+    
+    constexpr auto playfield_pos = Vec(32, 32);
 }
 
 int main()
 {
-    constexpr int window_width = 300;
-    constexpr int window_height = 300;
-    constexpr auto playfield_pos = Vec(32, 32);
     Direction input_direction = Direction::None;
 
     if (SDL_Init(SDL_INIT_VIDEO) == -1)
@@ -51,6 +65,7 @@ int main()
                                    SDL_WINDOWPOS_CENTERED,
                                    window_width,
                                    window_height,
+
                                    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -105,7 +120,7 @@ int main()
             }
 	}
 
-	if (duration_elapsed(frame_epoch, 1000 / 15))
+	if (duration_elapsed(frame_epoch, 1000 / frame_rate))
 	{
 	    switch (game_state)
 	    {
@@ -126,8 +141,17 @@ int main()
 	    }
 	    case GameState::LowerTetro:
 	    {
-		// TODO check for input to determine x pos of movement vector
-		current_tetro.pos += Vec(0, 1);
+		if (descent_delay > 0)
+		{
+		    --descent_delay;
+		}
+		else		    
+		{
+		    // lower the tetromino
+		    current_tetro.pos += Vec(0, 1);
+		    
+		    descent_delay = game_speed;
+		}
 
 		// Check if the player has attempted to move the tetro to either side
 		switch(input_direction)

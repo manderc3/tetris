@@ -26,7 +26,7 @@ namespace Tetromino
     // The template of all of the available tetrominos in the game.    
     static TetroTemplate i_tetro ({ "    IIII        ", "  I   I   I   I ", "        IIII    " , " I   I   I   I  " });
     static TetroTemplate o_tetro ({ "OO OO    ", "OO OO    ", "OO OO    ", "OO OO    " });
-    static TetroTemplate j_tetro ({ "J  JJJ   ", "J  JJJ   ", "J  JJJ   ", "J  JJJ   " });
+    static TetroTemplate j_tetro ({ "J  JJJ   ", " JJ J  J ", "   JJJ  J", " J  J JJ " });
     static TetroTemplate l_tetro ({ "  LLLL   ", " L  L  LL", "   LLLL  ", "LL  L  L " });
     static TetroTemplate s_tetro ({ " SSSS    ", " S  SS  S", "    SSSS ", "S  SS  S " });
     static TetroTemplate t_tetro ({ " T TTT   ", " T  TT T ", "   TTT T ", " T TT  T " });
