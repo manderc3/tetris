@@ -25,19 +25,22 @@ namespace
 	TetroLanded,
 	ClearRows
     };
-    
-    bool duration_elapsed(const std::chrono::time_point<std::chrono::steady_clock>& epoch, int duration)
+
+    template<typename T>
+    bool duration_elapsed(const std::chrono::time_point<std::chrono::steady_clock>& epoch, const int duration)
     {
 	using namespace std::chrono;
   
-	return duration_cast<milliseconds>(steady_clock::now() - epoch).count() > duration;
+	return duration_cast<T>(steady_clock::now() - epoch).count() > duration;
     }
+
+    bool apply_booster = false;
 
     // booster is applied temporarily to the game_speed variable when the player presses down
     constexpr std::int8_t booster = 5;
     
     // the speed of which the tetrominoes fall. the higher the number, the faster the descent
-    std::int8_t game_speed = 5;
+    std::int8_t game_speed = 20;
 
     // count down
     std::int8_t descent_delay = game_speed;
@@ -49,6 +52,9 @@ namespace
     constexpr int window_height = 300;
     
     constexpr auto playfield_pos = Vec(32, 32);
+
+    // time between increment of game speed
+    constexpr auto speed_interval = std::chrono::minutes(1);
 }
 
 int main()
@@ -85,6 +91,9 @@ int main()
     bool render_current_tetro = true;
     
     auto frame_epoch = std::chrono::steady_clock::now();
+
+    // the last time the speed increased (or the beginning of the game if the speed has yet to increase)
+    auto speed_epoch = std::chrono::steady_clock::now();
     
     for(;;)
     {
@@ -100,6 +109,10 @@ int main()
             {
                 auto key_state = SDL_GetKeyboardState(nullptr);
 
+		// downward movement input event		
+		apply_booster = key_state[SDL_SCANCODE_DOWN];
+		
+		// sideways movement input events
                 if (key_state[SDL_SCANCODE_LEFT])
 		{
 		    input_direction = Direction::Left;
@@ -108,19 +121,27 @@ int main()
 		else if (key_state[SDL_SCANCODE_RIGHT])
 		{
 		    input_direction = Direction::Right;
-		}
-		else if (key_state[SDL_SCANCODE_A] && playfield.can_rotate(current_tetro))
-		{
-		    current_tetro.rotate();
-		}
+		}		
 		else
 		{
 		    input_direction = Direction::None;
 		}
+
+		// rotation input event
+		if (key_state[SDL_SCANCODE_A] && playfield.can_rotate(current_tetro))
+		{
+		    current_tetro.rotate();
+		}
             }
 	}
 
-	if (duration_elapsed(frame_epoch, 1000 / frame_rate))
+	if (duration_elapsed<std::chrono::minutes>(speed_epoch, 0.1) && game_speed > 0)
+	{
+	    game_speed -= 2;
+	    speed_epoch = std::chrono::steady_clock::now();
+	}
+
+	if (duration_elapsed<std::chrono::milliseconds>(frame_epoch, 1000 / frame_rate))
 	{
 	    switch (game_state)
 	    {
@@ -141,16 +162,16 @@ int main()
 	    }
 	    case GameState::LowerTetro:
 	    {
-		if (descent_delay > 0)
-		{
-		    --descent_delay;
-		}
-		else		    
+		if (descent_delay == 0 || apply_booster)
 		{
 		    // lower the tetromino
 		    current_tetro.pos += Vec(0, 1);
 		    
 		    descent_delay = game_speed;
+		}
+		else		    
+		{
+		    --descent_delay;
 		}
 
 		// Check if the player has attempted to move the tetro to either side

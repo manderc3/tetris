@@ -79,8 +79,14 @@ bool PlayField::can_rotate(const Tetromino::Tetromino& current) const
     for (int y = 0; y < tetro_size; y++)
 	for (int x = 0; x < tetro_size; x++)
 	{
-	    if (next_orientation[y * tetro_size + x] != ' ' && playfield[(current.pos.y + y) * 10 + current.pos.x + x] != ' ')
-		return false;
+	    if (next_orientation[y * tetro_size + x] != ' ')
+	    {
+		if (current.pos.x < 0 || current.pos.x + tetro_size > 10)
+		    return false;
+		
+		if (playfield[(current.pos.y + y) * 10 + current.pos.x + x] != ' ')
+		    return false;
+	    }
 	}
 
     return true;
