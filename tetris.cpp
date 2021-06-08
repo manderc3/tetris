@@ -35,10 +35,8 @@ namespace
 	return duration_cast<T>(steady_clock::now() - epoch).count() > duration;
     }
 
+    // when player presses down the tetromino descends at maximum velocity
     bool apply_booster = false;
-
-    // booster is applied temporarily to the game_speed variable when the player presses down
-    constexpr std::int8_t booster = 5;
     
     constexpr int frame_rate = 60;
 
@@ -47,7 +45,7 @@ namespace
     constexpr int window_height = 300;
     
     constexpr auto playfield_pos = Vec(32, 32);
-
+    
     // time between increment of game speed
     constexpr auto speed_interval = std::chrono::minutes(1);
 
@@ -61,6 +59,31 @@ namespace
 	{5,  4},
 	{6,  0},    
     };
+
+    auto land_delay_timer = std::chrono::steady_clock::now();
+    int land_delay_interval = 1;
+
+    bool land_delay_timer_started = false;
+    
+    Vec get_new_horizontal_pos(const PlayField& playfield, const Tetromino::Tetromino& current_tetro, Direction direction)
+    {
+	// Check if the player has attempted to move the tetro to either side
+	switch(direction)
+	{
+	case Direction::Left:
+	    if (playfield.can_move(current_tetro, Direction::Left))
+		return Vec(-1, 0);
+	    break;
+	case Direction::Right:
+	    if (playfield.can_move(current_tetro, Direction::Right))
+		return Vec(1, 0);
+	    break;
+	default:
+	    break;
+	}
+
+	return Vec(0, 0);
+    }
 }
 
 int main()
@@ -122,6 +145,7 @@ int main()
 		apply_booster = key_state[SDL_SCANCODE_DOWN];
 		
 		// sideways movement input events
+		// TODO have movement velocity increase so small horizontal movements are easier
                 if (key_state[SDL_SCANCODE_LEFT])
 		{
 		    input_direction = Direction::Left;
@@ -172,50 +196,65 @@ int main()
 	    }
 	    case GameState::LowerTetro:
 	    {
-		if (descent_delay == 0 || apply_booster)
-		{
-		    // lower the tetromino
-		    current_tetro.pos += Vec(0, 1);
-		    
-		    descent_delay = game_speeds.at(current_level);
-		}
-		else		    
-		{
-		    --descent_delay;
-		}
-		    
-		    // Check if the player has attempted to move the tetro to either side
-		switch(input_direction)
-		{
-		case Direction::Left:
-		    if (playfield.can_move(current_tetro, Direction::Left))
-			current_tetro.pos += Vec(-1, 0);
-		    break;
-		case Direction::Right:
-		    if (playfield.can_move(current_tetro, Direction::Right))
-			current_tetro.pos += Vec(1, 0);
-		    break;
-		default:
-		    // No movement
-		    break;
-		}
-
 		if (!playfield.can_move(current_tetro, Direction::Down))
 		{
-		    // Cannot lower tetro further tetro.
+		    // Cannot lower tetro any further.
 		    game_state = GameState::TetroLanded;
 		}
+		else
+		{
+		    if (descent_delay == 0 || apply_booster)
+		    {
+			// lower the tetromino
+			current_tetro.pos += Vec(0, 1);
+		    
+			descent_delay = game_speeds.at(current_level);
+		    }
+		    else		    
+		    {
+			--descent_delay;
+		    }		
+		}
+
+		current_tetro.pos += get_new_horizontal_pos(playfield, current_tetro, input_direction);		
 	    
 		break;
 	    }
 	    case GameState::TetroLanded:
 	    {
-		// Commit current tetro to playfield
-		playfield.add_tetro(current_tetro);
-		game_state = GameState::ClearRows;
+		if (!land_delay_timer_started)
+		{
+		    land_delay_timer_started = true;
+		    land_delay_timer = std::chrono::steady_clock::now();
+		}
+		
+		if (land_delay_timer_started)
+		{
+		    if (duration_elapsed<std::chrono::seconds>(land_delay_timer, land_delay_interval))
+		    {
+			// Commit current tetro to playfield
+			playfield.add_tetro(current_tetro);
+			game_state = GameState::ClearRows;
 
-		// do not render current tetro until a new tetro has been generated
-		render_current_tetro = false;
+			// do not render current tetro until a new tetro has been generated
+			render_current_tetro = false;
+
+			// unset the following flag if a tetromino lands in the future
+			land_delay_timer_started = false;
+			break;
+		    }
+		    else
+		    {
+			// Duration not elapsed, allow player the opportunity to move tetromino
+			current_tetro.pos += get_new_horizontal_pos(playfield, current_tetro, input_direction);
+
+			if (playfield.can_move(current_tetro, Direction::Down))
+			{
+			    game_state = GameState::LowerTetro;
+			}			
+		    }
+		}
+
 		break;
 	    }
 	    case GameState::ClearRows:
