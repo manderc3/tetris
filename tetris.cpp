@@ -37,7 +37,7 @@ namespace
     
     constexpr int window_height = 300;
     
-    constexpr auto playfield_pos = Vec(32, 32);
+    constexpr auto playfield_pos = Vec(64, 64);
   
     // mappings between game level and descent    
     const std::unordered_map<std::int8_t, std::int8_t> game_speeds
@@ -271,6 +271,8 @@ int main()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
+	Rendering::render_hud(renderer, playfield_pos, 0, 0, current_tetro, current_tetro);
+	
 	if (render_current_tetro)
 	{
 	    Rendering::render_playfield(renderer, playfield_pos, playfield.get_playfield(), &current_tetro);

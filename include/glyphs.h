@@ -1,11 +1,11 @@
-#ifndef _GPLIPHS_H_
-#define _GPLIPHS_H_
+#ifndef _GLYPHS_H_
+#define _GLYPHS_H_
 
 #include <string_view>
 
 namespace Glyphs
 {
-    constexpr char _A[] =
+    char _A[] =
     {
 	"  ####  "
 	" ###### "
@@ -17,7 +17,7 @@ namespace Glyphs
 	"##    ##"
     };
 
-    constexpr char _B[] =
+    char _B[] =
     {
 	"####### "
 	"####### "
@@ -29,7 +29,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _C[] =
+    char _C[] =
     {
 	"########"
 	"########"
@@ -41,7 +41,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _D[] =
+    char _D[] =
     {
     	"####### "
     	"########"
@@ -53,7 +53,7 @@ namespace Glyphs
     	"####### "
     };
 
-    constexpr char _E[] =
+    char _E[] =
     {
     	"########"
     	"########"
@@ -65,7 +65,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _F[] =
+    char _F[] =
     {
     	"########"
     	"########"
@@ -77,7 +77,7 @@ namespace Glyphs
     	"##"
     };
 
-    constexpr char _G[] =
+    char _G[] =
     {
     	"########"
     	"########"
@@ -89,7 +89,7 @@ namespace Glyphs
     	" ###### "
     };
 
-    constexpr char _H[] =
+    char _H[] =
     {
     	"##    ##"
     	"##    ##"
@@ -101,7 +101,7 @@ namespace Glyphs
     	"##    ##"
     };
 
-    constexpr char _I[] =
+    char _I[] =
     {
     	"   ##   "
     	"   ##   "
@@ -113,7 +113,7 @@ namespace Glyphs
     	"   ##   "
     };
 
-    constexpr char _J[] =
+    char _J[] =
     {
     	"      ##"
     	"      ##"
@@ -125,7 +125,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _K[] =
+    char _K[] =
     {
     	"##   ###"
     	"##  ####"
@@ -137,7 +137,7 @@ namespace Glyphs
     	"##   ###"
     };
 
-    constexpr char _L[] =
+    char _L[] =
     {
     	"##      "
     	"##      "
@@ -149,7 +149,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _M[] =
+    char _M[] =
     {
     	"##    ##"
     	"###  ###"
@@ -161,7 +161,7 @@ namespace Glyphs
     	"##    ##"
     };
     
-    constexpr char _N[] =
+    char _N[] =
     {
     	"########"
     	"########"
@@ -173,7 +173,7 @@ namespace Glyphs
     	"##    ##"
     };
 
-    constexpr char _O[] =
+    char _O[] =
     {
     	"########"
     	"########"
@@ -185,7 +185,7 @@ namespace Glyphs
     	"########"
     };
     
-    constexpr char _P[] =
+    char _P[] =
     {
     	"########"
     	"########"
@@ -197,7 +197,7 @@ namespace Glyphs
     	"##      "
     };
     
-    constexpr char _Q[] =
+    char _Q[] =
     {
     	"########"
     	"########"
@@ -209,7 +209,7 @@ namespace Glyphs
     	"########"
     };    
 
-    constexpr char _R[] =
+    char _R[] =
     {
     	"########"
     	"########"
@@ -221,7 +221,7 @@ namespace Glyphs
     	"##    ##"
     };
     
-    constexpr char _S[] =
+    char _S[] =
     {
 	"####### "
 	"####### "
@@ -233,7 +233,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _T[] =
+    char _T[] =
     {
     	"########"
 	"########"
@@ -245,7 +245,7 @@ namespace Glyphs
     	"   ##   "
     };
 
-    constexpr char _U[] =
+    char _U[] =
     {
     	"##    ##"
     	"##    ##"
@@ -257,7 +257,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _V[] =
+    char _V[] =
     {
     	"##    ##"
     	"##    ##"
@@ -269,7 +269,7 @@ namespace Glyphs
     	"  ####  "
     };
 
-    constexpr char _W[] =
+    char _W[] =
     {
 	"##    ##"
     	"##    ##"
@@ -281,7 +281,7 @@ namespace Glyphs
 	"##    ##"
     };
 
-    constexpr char _X[] =
+    char _X[] =
     {
     	"##    ##"
     	"##    ##"
@@ -293,7 +293,7 @@ namespace Glyphs
     	"##    ##"
     };
     
-    constexpr char _Y[] =
+    char _Y[] =
     {
     	"##    ##"
     	"##    ##"
@@ -305,7 +305,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _Z[] =
+    char _Z[] =
     {
     	"########"
     	"########"
@@ -317,7 +317,7 @@ namespace Glyphs
     	"########"
     };    
 
-    constexpr char _0[] =
+    char _0[] =
     {
     	"########"
     	"########"
@@ -329,7 +329,7 @@ namespace Glyphs
     	"########"
     };
     
-    constexpr char _1[] =
+    char _1[] =
     {
     	"   ##   "
     	" ####   "
@@ -341,7 +341,7 @@ namespace Glyphs
     	"########"
     };
 
-    constexpr char _2[] =
+    char _2[] =
     {
 	"########"
 	"########"
@@ -353,7 +353,7 @@ namespace Glyphs
 	"########"
     };
     
-    constexpr char _3[] =
+    char _3[] =
     {
 	"########"
 	"########"
@@ -365,7 +365,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _4[] =
+    char _4[] =
     {
 	"##    ##"
 	"##    ##"
@@ -377,7 +377,7 @@ namespace Glyphs
 	"      ##"
     };
 
-    constexpr char _5[] =
+    char _5[] =
     {
 	"########"
 	"########"
@@ -389,7 +389,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _6[] =
+    char _6[] =
     {
 	"########"
 	"########"
@@ -401,7 +401,7 @@ namespace Glyphs
 	"########"
     };
 
-    constexpr char _7[] =
+    char _7[] =
     {
 	"########"
 	"########"
@@ -413,7 +413,7 @@ namespace Glyphs
 	"      ##"
     };
 
-    constexpr char _8[] =
+    char _8[] =
     {
 	"########"
 	"########"
@@ -425,7 +425,7 @@ namespace Glyphs
 	"########"
     };
     
-    constexpr char _9[] =
+    char _9[] =
     {
 	"########"
 	"########"
