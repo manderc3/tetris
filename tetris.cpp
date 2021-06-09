@@ -52,7 +52,7 @@ namespace
 
     auto land_delay_timer = Time::Timer<std::chrono::seconds>(1);
 
-    bool land_delay_timer_started = false;
+    auto gradual_velocity_timer = Time::Timer<std::chrono::milliseconds>(100);
     
     Vec get_new_horizontal_pos(const PlayField& playfield, const Tetromino::Tetromino& current_tetro, Direction direction)
     {
@@ -89,7 +89,6 @@ int main()
                                    SDL_WINDOWPOS_CENTERED,
                                    window_width,
                                    window_height,
-
                                    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -110,12 +109,12 @@ int main()
     auto game_state = GameState::LowerTetro;
     auto current_tetro = Tetromino::get_new_tetro();
     bool render_current_tetro = true;
-    
+
     auto frame_timer = Time::Timer<std::chrono::milliseconds>(1000 / frame_rate);
 
     // the last time the speed increased (or the beginning of the game if the speed has yet to increase)
     auto speed_timer = Time::Timer<std::chrono::minutes>(1);
-    
+
     for(;;)
     {
 	// input handling
@@ -134,18 +133,23 @@ int main()
 		apply_booster = key_state[SDL_SCANCODE_DOWN];
 		
 		// sideways movement input events
-		// TODO have movement velocity increase so small horizontal movements are easier
                 if (key_state[SDL_SCANCODE_LEFT])
 		{
+		    gradual_velocity_timer.begin();
+		    
 		    input_direction = Direction::Left;
 
 		}
 		else if (key_state[SDL_SCANCODE_RIGHT])
 		{
+		    gradual_velocity_timer.begin();
+		    
 		    input_direction = Direction::Right;
 		}		
 		else
 		{
+		    gradual_velocity_timer.stop();
+		    
 		    input_direction = Direction::None;
 		}
 
@@ -159,7 +163,7 @@ int main()
 
 	if (speed_timer.duration_elapsed() && current_level < 6)
 	{
-	    speed_timer.reset();
+	    speed_timer.begin();
 	    current_level++;
 	}
 
@@ -210,13 +214,12 @@ int main()
 	    }
 	    case GameState::TetroLanded:
 	    {
-		if (!land_delay_timer_started)
+		if (!land_delay_timer.has_started())
 		{
-		    land_delay_timer_started = true;
-		    land_delay_timer.reset();
+		    land_delay_timer.begin();
 		}
 		
-		if (land_delay_timer_started)
+		if (land_delay_timer.has_started())
 		{
 		    if (land_delay_timer.duration_elapsed())
 		    {
@@ -228,7 +231,7 @@ int main()
 			render_current_tetro = false;
 
 			// unset the following flag if a tetromino lands in the future
-			land_delay_timer_started = false;
+			land_delay_timer.stop();
 			break;
 		    }
 		    else
@@ -262,7 +265,7 @@ int main()
 	    }
 	    }
 
-	    frame_timer.reset();
+	    frame_timer.begin();
 	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);

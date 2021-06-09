@@ -11,9 +11,15 @@ namespace Time
     public:
     Timer(const T interval) : m_interval(interval) {};
 
-    void reset()
+    void begin()
     {
 	m_time_point = std::chrono::steady_clock::now();
+	m_ticking = true;
+    }
+
+    void stop()
+    {
+	m_ticking = false;
     }
 
     const bool duration_elapsed() const
@@ -21,10 +27,17 @@ namespace Time
 	return std::chrono::duration_cast<TimeType>(std::chrono::steady_clock::now() - m_time_point).count() > m_interval;
     }
 
+    const bool has_started() const
+    {
+	return m_ticking;
+    }
+
     private:
     std::chrono::time_point<std::chrono::steady_clock> m_time_point;
 
     const T m_interval;
+
+    bool m_ticking = false;
     };
 }
 
