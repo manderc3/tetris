@@ -107,7 +107,11 @@ int main()
     std::int8_t descent_delay = game_speeds.at(current_level);
     
     auto game_state = GameState::LowerTetro;
+    
+    auto next_tetro = Tetromino::get_new_tetro();
     auto current_tetro = Tetromino::get_new_tetro();
+    auto reserved_tetro = std::optional<Tetromino::Tetromino>();
+    
     bool render_current_tetro = true;
 
     auto frame_timer = Time::Timer<std::chrono::milliseconds>(1000 / frame_rate);
@@ -178,8 +182,12 @@ int main()
 	  
 	    case GameState::GenerateTetro:
 	    {
-		// Generate new tetromino
-		current_tetro = Tetromino::get_new_tetro();
+		// use the next tetro
+		current_tetro = std::move(next_tetro);
+
+		// generate a new next tetro
+		next_tetro = Tetromino::get_new_tetro();
+
 		game_state = GameState::LowerTetro;
 
 		// Ensure current_tetro will be rendered
@@ -271,7 +279,7 @@ int main()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	Rendering::render_hud(renderer, playfield_pos, 0, 0, current_tetro, current_tetro);
+	Rendering::render_hud(renderer, playfield_pos, 0, 0, next_tetro, current_tetro);
 	
 	if (render_current_tetro)
 	{

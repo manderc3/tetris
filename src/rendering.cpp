@@ -11,7 +11,7 @@ void Rendering::render_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const 
     for (int y = 0; y < 8; y++)
 	for (int x = 0; x < 8; x++)
 	{
-	    switch(tetro_tile[y * 8 + x])
+	    switch(tetro_tile[y * GameData::block_size + x])
 	    {
 	    case ' ': /* light */  SDL_SetRenderDrawColor(renderer, rgb[0].r, rgb[0].g, rgb[0].b, SDL_ALPHA_OPAQUE); break;
 	    case '#': /* base */   SDL_SetRenderDrawColor(renderer, rgb[2].r, rgb[2].g, rgb[2].b, SDL_ALPHA_OPAQUE); break;
@@ -21,6 +21,17 @@ void Rendering::render_tetro_tile(SDL_Renderer* renderer, const Vec& vec, const 
 
 	    SDL_RenderDrawPoint(renderer, vec.x + x, vec.y + y);
 	}
+}
+
+void Rendering::render_tetro(SDL_Renderer* renderer, const Tetromino::TetroTemplate& tetro_template, const Vec& pos, const int orientation)
+{
+    const auto templ = tetro_template[orientation];
+    const auto templ_size = tetro_template.templ_size;
+
+    for (int y = 0; y < templ_size; y++)
+	for (int x = 0; x < templ_size; x++)
+	    if (templ[y * templ_size + x] != ' ')
+		render_tetro_tile(renderer, Vec(pos.x + x * GameData::block_size, pos.y + y * GameData::block_size), tetro_template.colour);
 }
 
 void Rendering::render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const std::string_view& playfield, Tetromino::Tetromino* tetro)
@@ -80,13 +91,15 @@ void Rendering::render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int
     
     render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 2 * 8), "RESRV", Colour::yellow);
 
-    render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 8 * 8), "NEXT", Colour::yellow);
+    render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 7 * 8), "NEXT", Colour::yellow);
 
-    render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 14 * 8), "SCORE", Colour::yellow);
+    auto next_tetro_start = Vec(hud_pos.x + 13 * 8, hud_pos.y + 9 * 8);
+    render_tetro(renderer, next.t_template, next_tetro_start, 0);
+
+    render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 12 * 8), "SCORE", Colour::yellow);
 
     render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 17 * 8), "LEVEL", Colour::yellow);
 }
-
 
 void Rendering::render_text(SDL_Renderer* renderer, const Vec& pos, const std::string_view& text, const Colour colour)
 {

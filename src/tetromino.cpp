@@ -1,16 +1,17 @@
 #include "../include/tetromino.h"
 
-Tetromino::TetroTemplate::TetroTemplate(std::array<std::string, 4>&& init)
-    : templs(init)
+Tetromino::TetroTemplate::TetroTemplate(const Colour colour, std::array<std::string, 4>&& templs)
+    : colour(colour)
+    , m_templs(templs)
 {
     for (templ_size = 2; templ_size < 10; templ_size++)
-	if (static_cast<int>(templs[0].length()) / templ_size == templ_size)
+	if (static_cast<int>(m_templs[0].length()) / templ_size == templ_size)
 	    break;
 }
 
 std::string_view Tetromino::TetroTemplate::operator[](const std::size_t index) const
 {
-    return templs[index];
+    return m_templs[index];
 }
 
 Tetromino::Tetromino::Tetromino(const Vec pos, const TetroTemplate& t_template)
