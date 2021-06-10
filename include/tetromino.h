@@ -49,11 +49,13 @@ namespace Tetromino
     {
     public:
 	Tetromino(const Vec pos, const TetroTemplate& t_template);
+	Tetromino(Tetromino&&) = default;
 
 	Tetromino& operator=(Tetromino&& rhs)
 	{
 	    t_template = std::move(rhs.t_template);
 	    pos = rhs.pos;
+	    orientation = 0;
 	    return *this;
 	}
 	

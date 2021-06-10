@@ -25,11 +25,15 @@ namespace
 	EndGame,
 	LowerTetro,
 	TetroLanded,
-	ClearRows
+	ClearRows,
+	SwapTetro,    
     };
 
     // when player presses down the tetromino descends at maximum velocity
     bool apply_booster = false;
+
+    // swap with reserve tetromino
+    bool swap_with_reserve = false;
     
     constexpr int frame_rate = 60;
 
@@ -50,9 +54,17 @@ namespace
 	{6,  0},    
     };
 
+    //// Timers
+    // the time that should elapse before the landed tetromino is commited to the playfield
     auto land_delay_timer = Time::Timer<std::chrono::seconds>(1);
-
+    // the time that should elapse before horizontal velocity increases
     auto gradual_velocity_timer = Time::Timer<std::chrono::milliseconds>(100);
+    // the time that should elapse before the player can swap again
+    auto allow_swap_timer = Time::Timer<std::chrono::milliseconds>(500);
+    // timer that enforces frame rate
+    auto frame_timer = Time::Timer<std::chrono::milliseconds>(1000 / frame_rate);
+    // the last time the speed increased (or the beginning of the game if the speed has yet to increase)
+    auto speed_timer = Time::Timer<std::chrono::minutes>(1);
     
     Vec get_new_horizontal_pos(const PlayField& playfield, const Tetromino::Tetromino& current_tetro, Direction direction)
     {
@@ -114,11 +126,6 @@ int main()
     
     bool render_current_tetro = true;
 
-    auto frame_timer = Time::Timer<std::chrono::milliseconds>(1000 / frame_rate);
-
-    // the last time the speed increased (or the beginning of the game if the speed has yet to increase)
-    auto speed_timer = Time::Timer<std::chrono::minutes>(1);
-
     for(;;)
     {
 	// input handling
@@ -135,6 +142,8 @@ int main()
 
 		// downward movement input event		
 		apply_booster = key_state[SDL_SCANCODE_DOWN];
+
+		swap_with_reserve = key_state[SDL_SCANCODE_S];
 		
 		// sideways movement input events
                 if (key_state[SDL_SCANCODE_LEFT])
@@ -196,7 +205,12 @@ int main()
 	    }
 	    case GameState::LowerTetro:
 	    {
-		if (!playfield.can_move(current_tetro, Direction::Down))
+		if (swap_with_reserve && allow_swap_timer.duration_elapsed())
+		{
+		    game_state = GameState::SwapTetro;
+		}
+		
+		else if (!playfield.can_move(current_tetro, Direction::Down))
 		{
 		    // Cannot lower tetro any further.
 		    game_state = GameState::TetroLanded;
@@ -213,11 +227,32 @@ int main()
 		    else		    
 		    {
 			--descent_delay;
-		    }		
+		    }
+
+		    current_tetro.pos += get_new_horizontal_pos(playfield, current_tetro, input_direction);
+		}
+	    
+		break;
+	    }
+	    case GameState::SwapTetro:
+	    {
+		if (!reserved_tetro)
+		{
+		    reserved_tetro = std::move(current_tetro);
+		    game_state = GameState::GenerateTetro;
+		}
+		else
+		{
+		    std::swap(current_tetro, reserved_tetro.value());
+
+		    // keep the position of current_tetro
+		    current_tetro.pos = reserved_tetro->pos;
+		    
+		    game_state = GameState::LowerTetro;
 		}
 
-		current_tetro.pos += get_new_horizontal_pos(playfield, current_tetro, input_direction);		
-	    
+		allow_swap_timer.begin();
+
 		break;
 	    }
 	    case GameState::TetroLanded:
@@ -279,7 +314,7 @@ int main()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	Rendering::render_hud(renderer, playfield_pos, 0, 0, next_tetro, current_tetro);
+	Rendering::render_hud(renderer, playfield_pos, 0, 0, next_tetro, reserved_tetro);
 	
 	if (render_current_tetro)
 	{

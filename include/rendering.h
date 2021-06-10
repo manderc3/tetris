@@ -58,7 +58,7 @@ namespace Rendering
 
     void render_playfield(SDL_Renderer* renderer, const Vec& playfield_pos, const std::string_view& playfield, Tetromino::Tetromino* tetro = nullptr);
 
-    void render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int level, int score, const Tetromino::Tetromino& next, const Tetromino::Tetromino& reserve);
+    void render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int level, int score, const Tetromino::Tetromino& next, const std::optional<Tetromino::Tetromino>& reserve);
 
     void render_tetro(SDL_Renderer* renderer, const Tetromino::TetroTemplate& tetro_template, const Vec& pos, const int orientation);
 

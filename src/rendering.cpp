@@ -73,7 +73,7 @@ void Rendering::render_playfield(SDL_Renderer* renderer, const Vec& playfield_po
     }
 }
 
-void Rendering::render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int level, int score, const Tetromino::Tetromino& next, const Tetromino::Tetromino& reserve)
+void Rendering::render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int level, int score, const Tetromino::Tetromino& next, const std::optional<Tetromino::Tetromino>& reserve)
 {
     const auto hud_pos = Vec(playfield_pos.x - GameData::block_size, playfield_pos.y - GameData::block_size);
 
@@ -90,6 +90,12 @@ void Rendering::render_hud(SDL_Renderer* renderer, const Vec& playfield_pos, int
 
     
     render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 2 * 8), "RESRV", Colour::yellow);
+
+    if (reserve)
+    {
+	auto reserved_tetro_start = Vec(hud_pos.x + 13 * 8, hud_pos.y + 4 * 8);
+	render_tetro(renderer, reserve->t_template, reserved_tetro_start, 0);
+    }
 
     render_text(renderer, Vec(hud_pos.x + 13 * 8, hud_pos.y + 7 * 8), "NEXT", Colour::yellow);
 
